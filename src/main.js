@@ -64,7 +64,7 @@ form.addEventListener("submit", async (e) => {
   btn.textContent = "Ingresando...";
 
   try {
-    const resp = await fetch(`${BACKEND_URL}/login`, {
+    const resp = await fetch(`${BACKEND_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ usuario, password }),
