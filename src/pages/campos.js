@@ -85,17 +85,120 @@ export function renderCamposPage({ BACKEND_URL, onLogout }) {
         const sup = c.superficie != null ? Number(c.superficie).toFixed(2) : "-";
         const obs = c.observaciones ? c.observaciones : "";
         return `
-          <article class="item">
+          <article class="item" data-id="${c.id}">
             <div class="item-top">
               <strong>${escapeHtml(c.nombre)}</strong>
               <span class="pill">${sup} ha</span>
             </div>
+
             ${obs ? `<div class="item-sub">${escapeHtml(obs)}</div>` : ``}
+
+            <div class="item-actions">
+              <button class="btn btn-small btn-ghost js-edit" type="button">Editar</button>
+              <button class="btn btn-small btn-danger js-delete" type="button">Eliminar</button>
+            </div>
           </article>
         `;
       })
       .join("");
   }
+
+  listEl.addEventListener("click", async (e) => {
+    const item = e.target.closest(".item");
+    if (!item) return;
+
+    const id = item.getAttribute("data-id");
+    if (!id) return;
+
+    // ELIMINAR
+    if (e.target.classList.contains("js-delete")) {
+      const ok = confirm("¿Eliminar este campo? Esta acción no se puede deshacer.");
+      if (!ok) return;
+
+      try {
+        const resp = await fetch(`${BACKEND_URL}/campos/${id}`, {
+          method: "DELETE",
+          headers: getAuthHeaders(),
+        });
+
+        const data = await resp.json().catch(() => ({}));
+
+        if (resp.status === 401) {
+          localStorage.removeItem("token");
+          onLogout?.();
+          return;
+        }
+
+        if (!resp.ok) {
+          setListMsg(data.error || "No se pudo eliminar.", "error");
+          return;
+        }
+
+        setListMsg("Campo eliminado ✅", "success");
+        await loadCampos();
+      } catch (err) {
+        console.error(err);
+        setListMsg("Error de conexión.", "error");
+      }
+    }
+
+    // EDITAR
+    if (e.target.classList.contains("js-edit")) {
+      const nombreActual = item.querySelector("strong")?.textContent ?? "";
+      const supActual = item.querySelector(".pill")?.textContent?.replace(" ha", "") ?? "";
+      const obsActual = item.querySelector(".item-sub")?.textContent ?? "";
+
+      const nuevoNombre = prompt("Nuevo nombre del campo:", nombreActual);
+      if (nuevoNombre === null) return;
+
+      const nuevaSup = prompt("Nueva superficie (ha):", supActual);
+      if (nuevaSup === null) return;
+
+      const supNum = Number(nuevaSup);
+      if (!nuevoNombre.trim()) {
+        setListMsg("El nombre no puede estar vacío.", "error");
+        return;
+      }
+      if (Number.isNaN(supNum) || supNum <= 0) {
+        setListMsg("La superficie debe ser un número mayor a 0.", "error");
+        return;
+      }
+
+      const nuevasObs = prompt("Observaciones:", obsActual);
+      if (nuevasObs === null) return;
+
+      try {
+        const resp = await fetch(`${BACKEND_URL}/campos/${id}`, {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            nombre: nuevoNombre.trim(),
+            superficie: supNum,
+            observaciones: nuevasObs.trim(),
+          }),
+        });
+
+        const data = await resp.json().catch(() => ({}));
+
+        if (resp.status === 401) {
+          localStorage.removeItem("token");
+          onLogout?.();
+          return;
+        }
+
+        if (!resp.ok) {
+          setListMsg(data.error || "No se pudo editar.", "error");
+          return;
+        }
+
+        setListMsg("Campo actualizado ✅", "success");
+        await loadCampos();
+      } catch (err) {
+        console.error(err);
+        setListMsg("Error de conexión.", "error");
+      }
+    }
+  });
 
   async function loadCampos() {
     if (!BACKEND_URL) {
