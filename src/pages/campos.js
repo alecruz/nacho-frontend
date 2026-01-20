@@ -152,17 +152,32 @@ export function renderCamposPage({ BACKEND_URL, onLogout }) {
             data-nombre="${escapeHtml(c.nombre)}"
             data-superficie="${c.superficie ?? ""}"
             data-observaciones="${escapeHtml(c.observaciones ?? "")}"
-          >
-            <div class="item-top">
-              <strong>${escapeHtml(c.nombre)}</strong>
-              <span class="pill">${sup} ha</span>
-            </div>
+          >           
+            <div class="item-row">
+              <div class="item-main">
+                <div class="item-title">
+                  <strong>${escapeHtml(c.nombre)}</strong>
+                  <span class="pill">${sup} ha</span>
+                </div>
 
-            ${obs ? `<div class="item-sub">${escapeHtml(obs)}</div>` : ``}
+                ${obs ? `<div class="item-sub">${escapeHtml(obs)}</div>` : ``}
+              </div>
 
-            <div class="item-actions">
-              <button class="btn btn-small btn-ghost js-edit" type="button">Editar</button>
-              <button class="btn btn-small btn-danger js-delete" type="button">Eliminar</button>
+              <div class="item-actions-inline">
+                <button
+                  class="icon-action js-edit"
+                  type="button"
+                  title="Editar campo"
+                  aria-label="Editar"
+                >✏️</button>
+
+                <button
+                  class="icon-action danger js-delete"
+                  type="button"
+                  title="Eliminar campo"
+                  aria-label="Eliminar"
+                >🗑️</button>
+              </div>
             </div>
           </article>
         `;
