@@ -100,7 +100,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout }) {
             <p class="modal-text">
               ¿Seguro que querés eliminar <strong id="delete-name"></strong>?
               <br />
-              Esta acción no se puede deshacer.
+              El campo quedará inactivo y no se borrará la información histórica.
             </p>
 
             <div id="delete-msg" class="msg" aria-live="polite"></div>
