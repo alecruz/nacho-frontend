@@ -51,6 +51,68 @@ export function renderCamposPage({ BACKEND_URL, onLogout }) {
           </section>
         </div>
       </section>
+
+      <!-- Modal: Editar campo -->
+      <div id="modal-edit" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-edit-title">
+        <div class="modal">
+          <header class="modal-header">
+            <h3 id="modal-edit-title" class="modal-title">Editar campo</h3>
+            <button type="button" class="icon-btn" data-close="modal-edit" aria-label="Cerrar">✕</button>
+          </header>
+
+          <form id="edit-form" class="modal-body form">
+            <input type="hidden" id="edit-id" />
+
+            <label class="field">
+              <span>Nombre</span>
+              <input id="edit-nombre" type="text" required />
+            </label>
+
+            <label class="field">
+              <span>Superficie (ha)</span>
+              <input id="edit-superficie" type="number" step="0.01" min="0" required />
+            </label>
+
+            <label class="field">
+              <span>Observaciones</span>
+              <textarea id="edit-obs" rows="3"></textarea>
+            </label>
+
+            <div id="edit-msg" class="msg" aria-live="polite"></div>
+
+            <footer class="modal-footer">
+              <button type="button" class="btn btn-ghost" data-close="modal-edit">Cancelar</button>
+              <button id="edit-save" type="submit" class="btn">Guardar cambios</button>
+            </footer>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal: Confirmar eliminación -->
+      <div id="modal-delete" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-delete-title">
+        <div class="modal">
+          <header class="modal-header">
+            <h3 id="modal-delete-title" class="modal-title">Eliminar campo</h3>
+            <button type="button" class="icon-btn" data-close="modal-delete" aria-label="Cerrar">✕</button>
+          </header>
+
+          <div class="modal-body">
+            <p class="modal-text">
+              ¿Seguro que querés eliminar <strong id="delete-name"></strong>?
+              <br />
+              Esta acción no se puede deshacer.
+            </p>
+
+            <div id="delete-msg" class="msg" aria-live="polite"></div>
+
+            <footer class="modal-footer">
+              <button type="button" class="btn btn-ghost" data-close="modal-delete">Cancelar</button>
+              <button id="delete-confirm" type="button" class="btn btn-danger">Eliminar</button>
+            </footer>
+          </div>
+        </div>
+      </div>
+
     </main>
   `;
 
@@ -85,7 +147,12 @@ export function renderCamposPage({ BACKEND_URL, onLogout }) {
         const sup = c.superficie != null ? Number(c.superficie).toFixed(2) : "-";
         const obs = c.observaciones ? c.observaciones : "";
         return `
-          <article class="item" data-id="${c.id}">
+          <article class="item" 
+            data-id="${c.id}"
+            data-nombre="${escapeHtml(c.nombre)}"
+            data-superficie="${c.superficie ?? ""}"
+            data-observaciones="${escapeHtml(c.observaciones ?? "")}"
+          >
             <div class="item-top">
               <strong>${escapeHtml(c.nombre)}</strong>
               <span class="pill">${sup} ha</span>
@@ -103,101 +170,67 @@ export function renderCamposPage({ BACKEND_URL, onLogout }) {
       .join("");
   }
 
-  listEl.addEventListener("click", async (e) => {
+  listEl.addEventListener("click", (e) => {
     const item = e.target.closest(".item");
     if (!item) return;
 
     const id = item.getAttribute("data-id");
     if (!id) return;
 
-    // ELIMINAR
-    if (e.target.classList.contains("js-delete")) {
-      const ok = confirm("¿Eliminar este campo? Esta acción no se puede deshacer.");
-      if (!ok) return;
-
-      try {
-        const resp = await fetch(`${BACKEND_URL}/campos/${id}`, {
-          method: "DELETE",
-          headers: getAuthHeaders(),
-        });
-
-        const data = await resp.json().catch(() => ({}));
-
-        if (resp.status === 401) {
-          localStorage.removeItem("token");
-          onLogout?.();
-          return;
-        }
-
-        if (!resp.ok) {
-          setListMsg(data.error || "No se pudo eliminar.", "error");
-          return;
-        }
-
-        setListMsg("Campo eliminado ✅", "success");
-        await loadCampos();
-      } catch (err) {
-        console.error(err);
-        setListMsg("Error de conexión.", "error");
-      }
-    }
-
     // EDITAR
     if (e.target.classList.contains("js-edit")) {
-      const nombreActual = item.querySelector("strong")?.textContent ?? "";
-      const supActual = item.querySelector(".pill")?.textContent?.replace(" ha", "") ?? "";
-      const obsActual = item.querySelector(".item-sub")?.textContent ?? "";
-
-      const nuevoNombre = prompt("Nuevo nombre del campo:", nombreActual);
-      if (nuevoNombre === null) return;
-
-      const nuevaSup = prompt("Nueva superficie (ha):", supActual);
-      if (nuevaSup === null) return;
-
-      const supNum = Number(nuevaSup);
-      if (!nuevoNombre.trim()) {
-        setListMsg("El nombre no puede estar vacío.", "error");
-        return;
-      }
-      if (Number.isNaN(supNum) || supNum <= 0) {
-        setListMsg("La superficie debe ser un número mayor a 0.", "error");
-        return;
-      }
-
-      const nuevasObs = prompt("Observaciones:", obsActual);
-      if (nuevasObs === null) return;
-
-      try {
-        const resp = await fetch(`${BACKEND_URL}/campos/${id}`, {
-          method: "PUT",
-          headers: getAuthHeaders(),
-          body: JSON.stringify({
-            nombre: nuevoNombre.trim(),
-            superficie: supNum,
-            observaciones: nuevasObs.trim(),
-          }),
-        });
-
-        const data = await resp.json().catch(() => ({}));
-
-        if (resp.status === 401) {
-          localStorage.removeItem("token");
-          onLogout?.();
-          return;
-        }
-
-        if (!resp.ok) {
-          setListMsg(data.error || "No se pudo editar.", "error");
-          return;
-        }
-
-        setListMsg("Campo actualizado ✅", "success");
-        await loadCampos();
-      } catch (err) {
-        console.error(err);
-        setListMsg("Error de conexión.", "error");
-      }
+      // Prellenar modal
+      document.querySelector("#edit-id").value = id;
+      document.querySelector("#edit-nombre").value = item.getAttribute("data-nombre") || "";
+      document.querySelector("#edit-superficie").value = item.getAttribute("data-superficie") || "";
+      document.querySelector("#edit-obs").value = item.getAttribute("data-observaciones") || "";
+      document.querySelector("#edit-msg").textContent = "";
+      openModal(modalEdit);
+      return;
     }
+
+    // ELIMINAR
+    if (e.target.classList.contains("js-delete")) {
+      document.querySelector("#delete-confirm").setAttribute("data-id", id);
+      document.querySelector("#delete-name").textContent = item.getAttribute("data-nombre") || "este campo";
+      document.querySelector("#delete-msg").textContent = "";
+      openModal(modalDelete);
+      return;
+    }
+  });
+
+  const modalEdit = document.querySelector("#modal-edit");
+  const modalDelete = document.querySelector("#modal-delete");
+
+  function openModal(modalEl) {
+    modalEl.classList.remove("hidden");
+    modalEl.querySelector(".modal")?.focus?.();
+    document.body.classList.add("no-scroll");
+  }
+
+  function closeModal(modalEl) {
+    modalEl.classList.add("hidden");
+    document.body.classList.remove("no-scroll");
+  }
+
+  function closeAllModals() {
+    closeModal(modalEdit);
+    closeModal(modalDelete);
+  }
+
+  // Cerrar modal: click en backdrop o botones con data-close
+  [modalEdit, modalDelete].forEach((m) => {
+    m.addEventListener("click", (e) => {
+      const target = e.target;
+      const closeId = target?.getAttribute?.("data-close");
+      if (closeId) closeModal(document.querySelector(`#${closeId}`));
+      if (target.classList.contains("modal-backdrop")) closeModal(m);
+    });
+  });
+
+  // Cerrar con ESC
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeAllModals();
   });
 
   async function loadCampos() {
@@ -294,6 +327,124 @@ export function renderCamposPage({ BACKEND_URL, onLogout }) {
     } finally {
       btn.disabled = false;
       btn.textContent = original;
+    }
+  });
+
+  const editForm = document.querySelector("#edit-form");
+  const editMsg = document.querySelector("#edit-msg");
+  const editSaveBtn = document.querySelector("#edit-save");
+
+  function setEditMsg(text, type = "info") {
+    editMsg.textContent = text || "";
+    editMsg.className = `msg ${type}`;
+  }
+
+  editForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    setEditMsg("", "info");
+
+    const id = document.querySelector("#edit-id").value;
+    const nombre = document.querySelector("#edit-nombre").value.trim();
+    const superficieRaw = document.querySelector("#edit-superficie").value;
+    const observaciones = document.querySelector("#edit-obs").value.trim();
+
+    if (!nombre) {
+      setEditMsg("El nombre es obligatorio.", "error");
+      return;
+    }
+
+    if (!superficieRaw) {
+      setEditMsg("La superficie es obligatoria.", "error");
+      return;
+    }
+
+    const superficie = Number(superficieRaw);
+    if (Number.isNaN(superficie) || superficie <= 0) {
+      setEditMsg("La superficie debe ser un número mayor a 0.", "error");
+      return;
+    }
+
+    editSaveBtn.disabled = true;
+    const original = editSaveBtn.textContent;
+    editSaveBtn.textContent = "Guardando...";
+
+    try {
+      const resp = await fetch(`${BACKEND_URL}/campos/${id}`, {
+        method: "PUT",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ nombre, superficie, observaciones }),
+      });
+
+      const data = await resp.json().catch(() => ({}));
+
+      if (resp.status === 401) {
+        localStorage.removeItem("token");
+        onLogout?.();
+        return;
+      }
+
+      if (!resp.ok) {
+        setEditMsg(data.error || "No se pudo guardar.", "error");
+        return;
+      }
+
+      setEditMsg("Guardado ✅", "success");
+      closeModal(modalEdit);
+      await loadCampos();
+      setListMsg("Campo actualizado ✅", "success");
+    } catch (err) {
+        console.error(err);
+        setEditMsg("Error de conexión.", "error");
+    } finally {
+      editSaveBtn.disabled = false;
+      editSaveBtn.textContent = original;
+    }
+  });
+
+  const deleteBtn = document.querySelector("#delete-confirm");
+  const deleteMsg = document.querySelector("#delete-msg");
+
+  function setDeleteMsg(text, type = "info") {
+    deleteMsg.textContent = text || "";
+    deleteMsg.className = `msg ${type}`;
+  }
+
+  deleteBtn.addEventListener("click", async () => {
+    const id = deleteBtn.getAttribute("data-id");
+    if (!id) return;
+
+    deleteBtn.disabled = true;
+    const original = deleteBtn.textContent;
+    deleteBtn.textContent = "Eliminando...";
+
+    try {
+      const resp = await fetch(`${BACKEND_URL}/campos/${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      });
+
+      const data = await resp.json().catch(() => ({}));
+
+      if (resp.status === 401) {
+        localStorage.removeItem("token");
+        onLogout?.();
+        return;
+      }
+
+      if (!resp.ok) {
+        setDeleteMsg(data.error || "No se pudo eliminar.", "error");
+        return;
+      }
+
+      closeModal(modalDelete);
+      await loadCampos();
+      setListMsg("Campo eliminado ✅", "success");
+    } catch (err) {
+      console.error(err);
+      setDeleteMsg("Error de conexión.", "error");
+    } finally {
+      deleteBtn.disabled = false;
+      deleteBtn.textContent = original;
     }
   });
 
