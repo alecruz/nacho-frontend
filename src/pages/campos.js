@@ -1,7 +1,7 @@
 // src/pages/campos.js
 import { getAuthHeaders, logout } from "../auth/auth";
 
-export function renderCamposPage({ BACKEND_URL, onLogout }) {
+export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
   const app = document.querySelector("#app");
 
   app.innerHTML = `
