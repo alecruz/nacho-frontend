@@ -66,8 +66,7 @@ function renderLoginPage() {
           <button id="login-button" class="btn-primary" type="submit">Ingresar</button>
 
           <div id="msg" class="msg" aria-live="polite"></div>
-
-          <a class="login-link" href="#" onclick="return false;">¿Olvidaste tu contraseña?</a>
+        
         </form>
 
         <footer class="login-footer">
