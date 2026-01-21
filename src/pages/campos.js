@@ -16,6 +16,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout }) {
           <div class="actions">
             <button id="refresh" class="btn btn-ghost" type="button">Actualizar</button>
             <button id="logout" class="btn btn-ghost" type="button">Cerrar sesión</button>
+            <button id="go-cultivos" class="btn btn-ghost" type="button">Cultivos</button>
           </div>
         </header>
 
@@ -118,6 +119,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout }) {
 
   const refreshBtn = document.querySelector("#refresh");
   const logoutBtn = document.querySelector("#logout");
+  const goCultivosBtn = document.querySelector("#go-cultivos");
 
   const listEl = document.querySelector("#campos-list");
   const listMsg = document.querySelector("#list-msg");
@@ -212,7 +214,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout }) {
       openModal(modalDelete);
       return;
     }
-  });
+  });  
 
   const modalEdit = document.querySelector("#modal-edit");
   const modalDelete = document.querySelector("#modal-delete");
@@ -462,6 +464,8 @@ export function renderCamposPage({ BACKEND_URL, onLogout }) {
       deleteBtn.textContent = original;
     }
   });
+
+  goCultivosBtn.addEventListener("click", () => onGoCultivos?.());
 
   refreshBtn.addEventListener("click", loadCampos);
 

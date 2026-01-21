@@ -1,6 +1,7 @@
 import "./style.css";
 import { isAuthenticated } from "./auth/auth";
 import { renderCamposPage } from "./pages/campos";
+import { renderCultivosPage } from "./pages/cultivos";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -10,6 +11,15 @@ function goToCampos() {
   renderCamposPage({
     BACKEND_URL,
     onLogout: () => renderLoginPage(),
+    onGoCultivos: () => goToCultivos(),
+  });
+}
+
+function goToCultivos() {
+  renderCultivosPage({
+    BACKEND_URL,
+    onLogout: () => renderLoginPage(),
+    onGoCampos: () => goToCampos(),
   });
 }
 
