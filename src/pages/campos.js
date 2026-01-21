@@ -14,9 +14,9 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
           </div>
 
           <div class="actions">
-            <button id="refresh" class="btn btn-ghost" type="button">Actualizar</button>
-            <button id="logout" class="btn btn-ghost" type="button">Cerrar sesión</button>
             <button id="go-cultivos" class="btn btn-ghost" type="button">Cultivos</button>
+            <button id="refresh" class="btn btn-ghost" type="button">Actualizar</button>
+            <button id="logout" class="btn btn-ghost" type="button">Cerrar sesión</button>            
           </div>
         </header>
 
