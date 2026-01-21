@@ -25,30 +25,52 @@ function goToCultivos() {
 
 function renderLoginPage() {
   app.innerHTML = `
-    <main class="page">
-      <section class="card">
-        <header class="header">
-          <h1>Iniciar sesión</h1>
-          <p>Ingresá con tu usuario y contraseña.</p>
+    <main class="login-page">
+      <section class="login-card" aria-label="Inicio de sesión">
+        <header class="login-header">
+          <h1>Bienvenido</h1>
+          <p>Inicia sesión para continuar</p>
         </header>
 
-        <form id="login-form" class="form">
+        <form id="login-form" class="login-form">
           <label class="field">
-            <span>Usuario</span>
-            <input id="usuario" name="usuario" type="text" autocomplete="username" required />
+            <span class="sr-only">Usuario</span>
+            <div class="input-wrap">
+              <span class="icon" aria-hidden="true">👤</span>
+              <input
+                id="usuario"
+                name="usuario"
+                type="text"
+                autocomplete="username"
+                placeholder="Usuario"
+                required
+              />
+            </div>
           </label>
 
           <label class="field">
-            <span>Contraseña</span>
-            <input id="password" name="password" type="password" autocomplete="current-password" required />
+            <span class="sr-only">Contraseña</span>
+            <div class="input-wrap">
+              <span class="icon" aria-hidden="true">🔒</span>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Contraseña"
+                required
+              />
+            </div>
           </label>
 
-          <button id="login-button" class="btn" type="submit">Ingresar</button>
+          <button id="login-button" class="btn-primary" type="submit">Ingresar</button>
 
           <div id="msg" class="msg" aria-live="polite"></div>
+
+          <a class="login-link" href="#" onclick="return false;">¿Olvidaste tu contraseña?</a>
         </form>
 
-        <footer class="footer">
+        <footer class="login-footer">
           <small>© ${new Date().getFullYear()} Sistema de Gestión</small>
         </footer>
       </section>
@@ -98,15 +120,10 @@ function renderLoginPage() {
         return;
       }
 
-      // Guardar token (para usarlo luego en el resto del sistema)
       localStorage.setItem("token", data.token);
 
       setMsg("Login exitoso ✅", "success");
-
       goToCampos();
-
-      // Próximo paso: redirigir cuando exista dashboard
-      // window.location.href = "/dashboard.html";
     } catch (err) {
       console.error(err);
       setMsg("Error de conexión con el servidor.", "error");
