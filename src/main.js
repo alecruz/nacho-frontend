@@ -28,7 +28,8 @@ function renderLoginPage() {
     <main class="login-page">
       <section class="login-card" aria-label="Inicio de sesión">
         <header class="login-header">
-          <h1>Bienvenido a <span class="brand">ILIAGRO SOFT</span></h1>
+          <h1>Bienvenido</h1>
+          <div class="brandline">ILIAGRO SOFT</div>
           <p>Inicia sesión para continuar</p>
         </header>
 
@@ -50,8 +51,8 @@ function renderLoginPage() {
 
           <label class="field">
             <span class="sr-only">Contraseña</span>
-            <div class="input-wrap">
-              <span class="icon" aria-hidden="true">🔒</span>
+            <div class="login-input-wrap">
+              <span class="login-icon" aria-hidden="true">🔒</span>
               <input
                 id="password"
                 name="password"

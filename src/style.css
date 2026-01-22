@@ -427,10 +427,9 @@ body{
 }
 
 .login-header h1{
-  margin: 0 0 6px;
-  font-size: 30px;
-  line-height: 1.2;
-  letter-spacing: -0.3px;
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
   color: #35533D;
 }
 
@@ -443,6 +442,14 @@ body{
   margin: 0 0 14px;
   font-size: 15px;
   color: var(--login-muted);
+}
+
+.brandline{
+  margin-top: 6px;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: var(--login-primary);
 }
 
 /* Form */
@@ -471,17 +478,23 @@ body{
 
 .login-input-wrap input{
   width: 100%;
-  border: 0;
   outline: none;
-  background: transparent;
   font-size: 16px;
   padding: 6px 0;
-  color: var(--login-text);
+  background: transparent !important;
+  color: var(--login-text) !important;
+  border: 0 !important;
 }
 
 .login-input-wrap:focus-within{
   border-color: rgba(47,93,58,0.75);
   box-shadow: 0 0 0 3px rgba(47,93,58,0.18), 0 10px 22px rgba(0,0,0,0.08);
+}
+
+/* Si el navegador mete autofill y te lo pinta raro */
+.login-input-wrap input:-webkit-autofill{
+  -webkit-text-fill-color: var(--login-text);
+  transition: background-color 9999s ease-in-out 0s;
 }
 
 /* Botón */
