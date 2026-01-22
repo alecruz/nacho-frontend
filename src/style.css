@@ -395,8 +395,8 @@ body{
 /* Logo login */
 .login-logo{
   display: block;
-  margin: 0 auto 14px;
-  max-width: 180px;
+  margin: 0 auto 18px;
+  max-width: 150px;
   width: 100%;
   height: auto;
 }
