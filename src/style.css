@@ -565,3 +565,154 @@ body{
     font-size: 26px;
   }
 }
+
+/* =========================
+   TOPBAR – ILIAGRO SOFT
+   ========================= */
+
+.shell{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content{
+  padding: 18px 24px 24px;
+}
+
+/* Barra superior */
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  margin: 16px 18px 8px;
+  padding: 14px 18px;
+
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--card2), var(--card));
+  backdrop-filter: blur(10px);
+  box-shadow: 0 18px 50px rgba(0,0,0,.35);
+}
+
+/* Lado izquierdo: logo + marca */
+.topbar__left{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.topbar__logo{
+  width: 40px;
+  height: 40px;
+  padding: 6px;
+  border-radius: 12px;
+  object-fit: contain;
+
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--border);
+}
+
+.topbar__brand{
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  min-width: 0;
+}
+
+.topbar__name{
+  font-weight: 800;
+  letter-spacing: .4px;
+  white-space: nowrap;
+}
+
+.topbar__tag{
+  font-size: .85rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
+}
+
+/* Navegación central */
+.topbar__nav{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Tabs (Campos / Cultivos) */
+.tab{
+  padding: 10px 16px;
+  border-radius: 999px;
+
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.08);
+  color: var(--text);
+
+  font-weight: 650;
+  cursor: pointer;
+  transition: background .15s ease, transform .05s ease;
+}
+
+.tab:hover{
+  background: rgba(255,255,255,.14);
+}
+
+.tab:active{
+  transform: translateY(1px);
+}
+
+.tab.is-active{
+  background: rgba(95,255,168,.18);
+  border-color: rgba(95,255,168,.35);
+  color: var(--text);
+}
+
+/* Lado derecho */
+.topbar__right{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar__btn{
+  border-radius: 999px;
+  padding: 10px 14px;
+}
+
+/* Responsive */
+@media (max-width: 900px){
+  .topbar{
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .topbar__nav{
+    justify-content: flex-start;
+  }
+
+  .topbar__right{
+    justify-content: flex-end;
+  }
+
+  .content{
+    padding: 14px 18px 18px;
+  }
+}
+
+@media (max-width: 520px){
+  .topbar__tag{
+    display: none;
+  }
+}
+

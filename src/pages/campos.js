@@ -1,56 +1,55 @@
 // src/pages/campos.js
 import { getAuthHeaders, logout } from "../auth/auth";
+import { renderTopbar, wireTopbar } from "../ui/header";
 
 export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
   const app = document.querySelector("#app");
 
   app.innerHTML = `
-    <main class="page">
-      <section class="card card-wide">
-        <header class="header header-row">
-          <div>
-            <h1>Campos</h1>
-            <p>Listado de campos del cliente.</p>
+    <main class="shell">
+      ${renderTopbar({ active: "campos" })}
+
+      <section class="content">
+        <section class="card card-wide">
+          <header class="header">
+            <div>
+              <h1>Campos</h1>
+              <p>Listado de campos del cliente.</p>
+            </div>
+          </header>
+
+          <div class="grid">
+            <section class="panel">
+              <h2 class="h2">Nuevo campo</h2>
+
+              <form id="campo-form" class="form">
+                <label class="field">
+                  <span>Nombre</span>
+                  <input id="campo-nombre" type="text" required />
+                </label>
+
+                <label class="field">
+                  <span>Superficie (ha)</span>
+                  <input id="campo-superficie" type="number" step="0.01" min="0" required />
+                </label>
+
+                <label class="field">
+                  <span>Observaciones</span>
+                  <textarea id="campo-obs" rows="3"></textarea>
+                </label>
+
+                <button id="campo-btn" class="btn" type="submit">Crear campo</button>
+                <div id="campo-msg" class="msg" aria-live="polite"></div>
+              </form>
+            </section>
+
+            <section class="panel">
+              <h2 class="h2">Tus campos</h2>
+              <div id="list-msg" class="msg" aria-live="polite"></div>
+              <div id="campos-list" class="list"></div>
+            </section>
           </div>
-
-          <div class="actions">
-            <button id="go-cultivos" class="btn btn-ghost" type="button">Cultivos</button>
-            <button id="refresh" class="btn btn-ghost" type="button">Actualizar</button>
-            <button id="logout" class="btn btn-ghost" type="button">Cerrar sesión</button>            
-          </div>
-        </header>
-
-        <div class="grid">
-          <section class="panel">
-            <h2 class="h2">Nuevo campo</h2>
-
-            <form id="campo-form" class="form">
-              <label class="field">
-                <span>Nombre</span>
-                <input id="campo-nombre" type="text" required />
-              </label>
-
-              <label class="field">
-                <span>Superficie (ha)</span>
-                <input id="campo-superficie" type="number" step="0.01" min="0" required />
-              </label>
-
-              <label class="field">
-                <span>Observaciones</span>
-                <textarea id="campo-obs" rows="3"></textarea>
-              </label>
-
-              <button id="campo-btn" class="btn" type="submit">Crear campo</button>
-              <div id="campo-msg" class="msg" aria-live="polite"></div>
-            </form>
-          </section>
-
-          <section class="panel">
-            <h2 class="h2">Tus campos</h2>
-            <div id="list-msg" class="msg" aria-live="polite"></div>
-            <div id="campos-list" class="list"></div>
-          </section>
-        </div>
+        </section>
       </section>
 
       <!-- Modal: Editar campo -->
@@ -113,13 +112,8 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
           </div>
         </div>
       </div>
-
     </main>
   `;
-
-  const refreshBtn = document.querySelector("#refresh");
-  const logoutBtn = document.querySelector("#logout");
-  const goCultivosBtn = document.querySelector("#go-cultivos");
 
   const listEl = document.querySelector("#campos-list");
   const listMsg = document.querySelector("#list-msg");
@@ -154,7 +148,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
             data-nombre="${escapeHtml(c.nombre)}"
             data-superficie="${c.superficie ?? ""}"
             data-observaciones="${escapeHtml(c.observaciones ?? "")}"
-          >           
+          >
             <div class="item-row">
               <div class="item-main">
                 <div class="item-title">
@@ -166,19 +160,8 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
               </div>
 
               <div class="item-actions-inline">
-                <button
-                  class="icon-action js-edit"
-                  type="button"
-                  title="Editar campo"
-                  aria-label="Editar"
-                >✏️</button>
-
-                <button
-                  class="icon-action danger js-delete"
-                  type="button"
-                  title="Eliminar campo"
-                  aria-label="Eliminar"
-                >🗑️</button>
+                <button class="icon-action js-edit" type="button" title="Editar campo" aria-label="Editar">✏️</button>
+                <button class="icon-action danger js-delete" type="button" title="Eliminar campo" aria-label="Eliminar">🗑️</button>
               </div>
             </div>
           </article>
@@ -194,9 +177,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
     const id = item.getAttribute("data-id");
     if (!id) return;
 
-    // EDITAR
     if (e.target.classList.contains("js-edit")) {
-      // Prellenar modal
       document.querySelector("#edit-id").value = id;
       document.querySelector("#edit-nombre").value = item.getAttribute("data-nombre") || "";
       document.querySelector("#edit-superficie").value = item.getAttribute("data-superficie") || "";
@@ -206,7 +187,6 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
       return;
     }
 
-    // ELIMINAR
     if (e.target.classList.contains("js-delete")) {
       document.querySelector("#delete-confirm").setAttribute("data-id", id);
       document.querySelector("#delete-name").textContent = item.getAttribute("data-nombre") || "este campo";
@@ -214,7 +194,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
       openModal(modalDelete);
       return;
     }
-  });  
+  });
 
   const modalEdit = document.querySelector("#modal-edit");
   const modalDelete = document.querySelector("#modal-delete");
@@ -235,7 +215,6 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
     closeModal(modalDelete);
   }
 
-  // Cerrar modal: click en backdrop o botones con data-close
   [modalEdit, modalDelete].forEach((m) => {
     m.addEventListener("click", (e) => {
       const target = e.target;
@@ -245,7 +224,6 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
     });
   });
 
-  // Cerrar con ESC
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeAllModals();
   });
@@ -266,7 +244,6 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
       const data = await resp.json().catch(() => ({}));
 
       if (resp.status === 401) {
-        // token inválido/expirado
         localStorage.removeItem("token");
         onLogout?.();
         return;
@@ -295,15 +272,8 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
     const superficieRaw = document.querySelector("#campo-superficie").value;
     const observaciones = document.querySelector("#campo-obs").value.trim();
 
-    if (!nombre) {
-      setFormMsg("El nombre es obligatorio.", "error");
-      return;
-    }
-
-    if (!superficieRaw) {
-      setFormMsg("La superficie es obligatoria.", "error");
-      return;
-    }
+    if (!nombre) return setFormMsg("El nombre es obligatorio.", "error");
+    if (!superficieRaw) return setFormMsg("La superficie es obligatoria.", "error");
 
     const superficie = Number(superficieRaw);
     if (Number.isNaN(superficie) || superficie <= 0) {
@@ -365,15 +335,8 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
     const superficieRaw = document.querySelector("#edit-superficie").value;
     const observaciones = document.querySelector("#edit-obs").value.trim();
 
-    if (!nombre) {
-      setEditMsg("El nombre es obligatorio.", "error");
-      return;
-    }
-
-    if (!superficieRaw) {
-      setEditMsg("La superficie es obligatoria.", "error");
-      return;
-    }
+    if (!nombre) return setEditMsg("El nombre es obligatorio.", "error");
+    if (!superficieRaw) return setEditMsg("La superficie es obligatoria.", "error");
 
     const superficie = Number(superficieRaw);
     if (Number.isNaN(superficie) || superficie <= 0) {
@@ -410,8 +373,8 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
       await loadCampos();
       setListMsg("Campo actualizado ✅", "success");
     } catch (err) {
-        console.error(err);
-        setEditMsg("Error de conexión.", "error");
+      console.error(err);
+      setEditMsg("Error de conexión.", "error");
     } finally {
       editSaveBtn.disabled = false;
       editSaveBtn.textContent = original;
@@ -465,13 +428,15 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
     }
   });
 
-  goCultivosBtn.addEventListener("click", () => onGoCultivos?.());
-
-  refreshBtn.addEventListener("click", loadCampos);
-
-  logoutBtn.addEventListener("click", () => {
-    logout();
-    onLogout?.();
+  // 🔌 Conectar Topbar
+  wireTopbar({
+    onGoCampos: () => {}, // ya estás en Campos
+    onGoCultivos: () => onGoCultivos?.(),
+    onRefresh: loadCampos,
+    onLogout: () => {
+      logout();
+      onLogout?.();
+    },
   });
 
   loadCampos();
