@@ -379,9 +379,10 @@ body{
 }
 
 /* =========================
-   LOGIN (Agro - fondo campo)
+   LOGIN (ILIAGRO SOFT)
    ========================= */
 
+/* Variables solo para login */
 :root{
   --login-primary: #2F5D3A;
   --login-primary-dark: #264C30;
@@ -391,6 +392,7 @@ body{
   --login-overlay: rgba(10, 20, 12, 0.55);
 }
 
+/* El login NO usa el fondo dark general del body, por eso le damos su propio "escenario" */
 .login-page{
   min-height: 100vh;
   padding: 24px;
@@ -405,6 +407,7 @@ body{
   background-position: center;
 }
 
+/* Card */
 .login-card{
   width: min(420px, 100%);
   padding: 26px 26px 22px;
@@ -416,22 +419,36 @@ body{
   color: var(--login-text);
 }
 
+/* Tipografía solo en login (si todavía no pusiste Poppins en index.html, no pasa nada) */
+.login-card,
+.login-card input,
+.login-card button{
+  font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
 .login-header h1{
   margin: 0 0 6px;
-  font-size: 34px;
-  letter-spacing: -0.5px;
+  font-size: 30px;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
   color: #35533D;
+}
+
+.login-header .brand{
+  color: var(--login-primary);
+  font-weight: 700;
 }
 
 .login-header p{
   margin: 0 0 14px;
-  font-size: 16px;
+  font-size: 15px;
   color: var(--login-muted);
 }
 
+/* Form */
 .login-form .field{ display:block; margin: 14px 0; }
 
-.input-wrap{
+.login-input-wrap{
   display: flex;
   align-items: center;
   gap: 10px;
@@ -442,7 +459,7 @@ body{
   box-shadow: 0 6px 18px rgba(0,0,0,0.06);
 }
 
-.icon{
+.login-icon{
   width: 28px;
   height: 28px;
   display:flex;
@@ -452,7 +469,7 @@ body{
   font-size: 18px;
 }
 
-.input-wrap input{
+.login-input-wrap input{
   width: 100%;
   border: 0;
   outline: none;
@@ -462,12 +479,13 @@ body{
   color: var(--login-text);
 }
 
-.input-wrap:focus-within{
+.login-input-wrap:focus-within{
   border-color: rgba(47,93,58,0.75);
   box-shadow: 0 0 0 3px rgba(47,93,58,0.18), 0 10px 22px rgba(0,0,0,0.08);
 }
 
-.btn-primary{
+/* Botón */
+.login-btn-primary{
   width: 100%;
   margin-top: 10px;
   padding: 12px 14px;
@@ -483,33 +501,25 @@ body{
   box-shadow: 0 14px 28px rgba(47,93,58,0.30);
 }
 
-.btn-primary:hover{ filter: brightness(0.98); transform: translateY(-1px); }
-.btn-primary:active{ transform: translateY(0px); }
-.btn-primary:disabled{ opacity: 0.75; cursor: not-allowed; transform: none; }
+.login-btn-primary:hover{ filter: brightness(0.98); transform: translateY(-1px); }
+.login-btn-primary:active{ transform: translateY(0px); }
+.login-btn-primary:disabled{ opacity: 0.75; cursor: not-allowed; transform: none; }
 
-.msg{
+/* Mensajes SOLO para login (para no pisar tu .msg global) */
+.login-msg{
   margin-top: 12px;
   min-height: 22px;
   font-size: 14px;
+  color: var(--login-muted);
 }
-
-.msg.error{ color: #b42318; }
-.msg.success{ color: #067647; }
-.msg.info{ color: var(--login-muted); }
-
-.login-link{
-  display: block;
-  text-align: center;
-  margin-top: 16px;
-  color: #6B5A3D;
-  text-decoration: underline;
-  font-size: 18px;
-}
+.login-msg.error{ color: #b42318; }
+.login-msg.success{ color: #067647; }
 
 .login-footer{
   margin-top: 14px;
   text-align: center;
   color: rgba(0,0,0,0.55);
+  font-size: 12px;
 }
 
 .sr-only{
@@ -524,8 +534,7 @@ body{
   .login-card{
     padding: 22px 18px 18px;
   }
-
   .login-header h1{
-    font-size: 28px;
+    font-size: 26px;
   }
 }

@@ -28,15 +28,15 @@ function renderLoginPage() {
     <main class="login-page">
       <section class="login-card" aria-label="Inicio de sesión">
         <header class="login-header">
-          <h1>Bienvenido</h1>
+          <h1>Bienvenido a <span class="brand">ILIAGRO SOFT</span></h1>
           <p>Inicia sesión para continuar</p>
         </header>
 
         <form id="login-form" class="login-form">
           <label class="field">
             <span class="sr-only">Usuario</span>
-            <div class="input-wrap">
-              <span class="icon" aria-hidden="true">👤</span>
+            <div class="login-input-wrap">
+              <span class="login-icon" aria-hidden="true">👤</span>
               <input
                 id="usuario"
                 name="usuario"
@@ -63,14 +63,14 @@ function renderLoginPage() {
             </div>
           </label>
 
-          <button id="login-button" class="btn-primary" type="submit">Ingresar</button>
+          <button id="login-button" class="login-btn-primary" type="submit">Ingresar</button>
 
-          <div id="msg" class="msg" aria-live="polite"></div>
+          <div id="msg" class="login-msg" aria-live="polite"></div>
         
         </form>
 
         <footer class="login-footer">
-          <small>© ${new Date().getFullYear()} Sistema de Gestión</small>
+          <small>© ${new Date().getFullYear()} ILIAGRO SOFT – Sistema de Gestión Agropecuaria</small>
         </footer>
       </section>
     </main>
@@ -82,7 +82,7 @@ function renderLoginPage() {
 
   function setMsg(text, type = "info") {
     msg.textContent = text || "";
-    msg.className = `msg ${type}`;
+    msg.className = `login-msg ${type}`;
   }
 
   form.addEventListener("submit", async (e) => {
