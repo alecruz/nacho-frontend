@@ -28,8 +28,13 @@ function renderLoginPage() {
     <main class="login-page">
       <section class="login-card" aria-label="Inicio de sesión">
         <header class="login-header">
+          <img
+            src="/img/logo-iliagro.png"
+            alt="ILIAGRO SOFT"
+            class="login-logo"
+          />
+
           <h1>Bienvenido</h1>
-          <div class="brandline">ILIAGRO SOFT</div>
           <p>Inicia sesión para continuar</p>
         </header>
 

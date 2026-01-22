@@ -392,6 +392,20 @@ body{
   --login-overlay: rgba(10, 20, 12, 0.55);
 }
 
+/* Logo login */
+.login-logo{
+  display: block;
+  margin: 0 auto 14px;
+  max-width: 180px;
+  width: 100%;
+  height: auto;
+}
+
+/* Header refinado */
+.login-header{
+  text-align: center;
+}
+
 /* El login NO usa el fondo dark general del body, por eso le damos su propio "escenario" */
 .login-page{
   min-height: 100vh;
@@ -428,8 +442,8 @@ body{
 
 .login-header h1{
   margin: 0;
-  font-size: 28px;
-  line-height: 1.1;
+  font-size: 26px;
+  line-height: 1.2;
   color: #35533D;
 }
 
@@ -439,7 +453,7 @@ body{
 }
 
 .login-header p{
-  margin: 0 0 14px;
+  margin: 8px 0 14px;
   font-size: 15px;
   color: var(--login-muted);
 }
