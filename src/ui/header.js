@@ -3,11 +3,11 @@ export function renderTopbar({ active = "campos" }) {
   return `
     <header class="topbar">
       <div class="topbar__left">
-        <img class="topbar__logo" src="/img/logo-iliagro.png" alt="ILIAGRO SOFT" />
+        <img class="topbar__logo" src="/img/logo-iliagro-icon.png" alt="ILIAGRO SOFT" />     
         <div class="topbar__brand">
           <div class="topbar__name">ILIAGRO SOFT</div>
           <div class="topbar__tag">Sistema de Gestión Agropecuaria</div>
-        </div>
+        </div>   
       </div>
 
       <nav class="topbar__nav" aria-label="Navegación">

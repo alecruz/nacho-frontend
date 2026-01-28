@@ -631,36 +631,36 @@ body{
 }
 
 .topbar__logo{
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+
   width: 40px;
   height: 40px;
-  padding: 6px;
-  border-radius: 12px;
   object-fit: contain;
-
-  background: rgba(255,255,255,.85);
-  border: 1px solid var(--border);
 }
 
 .topbar__brand{
   display: flex;
   flex-direction: column;
-  line-height: 1.1;
+  line-height: 1.15;
   min-width: 0;
 }
 
 .topbar__name{
+  font-size: 16px;
   font-weight: 800;
   letter-spacing: .4px;
-  white-space: nowrap;
+  color: #1f2d24;
 }
 
 .topbar__tag{
-  font-size: .85rem;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 320px;
+  display: block !important;
+  font-size: 12.5px;
+  color: #5f6f65;
+  line-height: 1.2;
 }
 
 .topbar__nav{
@@ -726,7 +726,71 @@ body{
 }
 
 @media (max-width: 520px){
-  .topbar__tag{
-    display: none;
+  .topbar__name{
+    font-size: 14px;
   }
+
+  .topbar__tag{
+    font-size: 11px;
+  }
+
+  .topbar__logo{
+    width: 48px;
+    height: 48px;
+  }
+}
+/* =========================
+   LAYOUT REFINADO (Campos/Cultivos)
+   - Centrado y ancho controlado
+   - Sin gris de fondo en contenedores
+   ========================= */
+
+.content{
+  padding: 28px 24px 40px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Card contenedora principal (ancho elegante + fondo limpio) */
+.card-wide{
+  width: 100%;
+  max-width: 1200px;
+  background: linear-gradient(180deg, #e4e7e4, #dde1dd);
+}
+
+/* Grid: dar más espacio al listado para evitar “vacío” a la derecha */
+.grid{
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 24px;
+}
+
+/* Paneles: blanco limpio y con sombra suave */
+.panel{
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.08);
+}
+
+/* Ítems del listado: blanco limpio */
+.item{
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+/* Pills un poquito más integradas */
+.pill{
+  background: rgba(47,93,58,.08);
+  border-color: rgba(47,93,58,.18);
+  color: var(--muted);
+}
+
+/* Responsive: apilar columnas */
+@media (max-width: 900px){
+  .grid{ grid-template-columns: 1fr; }
+  .content{ padding: 18px 14px 28px; }
 }

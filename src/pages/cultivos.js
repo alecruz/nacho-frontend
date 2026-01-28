@@ -1,51 +1,50 @@
 // src/pages/cultivos.js
 import { getAuthHeaders, logout } from "../auth/auth";
+import { renderTopbar, wireTopbar } from "../ui/header";
 
 export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
   const app = document.querySelector("#app");
 
   app.innerHTML = `
-    <main class="page">
-      <section class="card card-wide">
-        <header class="header header-row">
-          <div>
-            <h1>Cultivos</h1>
-            <p>Gestioná el catálogo de cultivos del cliente.</p>
+    <main class="shell">
+      ${renderTopbar({ active: "cultivos" })}
+
+      <section class="content">
+        <section class="card card-wide">
+          <header class="header">
+            <div>
+              <h1>Cultivos</h1>
+              <p>Gestioná el catálogo de cultivos del cliente.</p>
+            </div>
+          </header>
+
+          <div class="grid">
+            <section class="panel">
+              <h2 class="h2">Nuevo cultivo</h2>
+
+              <form id="cultivo-form" class="form">
+                <label class="field">
+                  <span>Nombre</span>
+                  <input id="cultivo-nombre" type="text" required />
+                </label>
+
+                <label class="field">
+                  <span>Observaciones</span>
+                  <textarea id="cultivo-obs" rows="3"></textarea>
+                </label>
+
+                <button id="cultivo-btn" class="btn" type="submit">Crear cultivo</button>
+                <div id="cultivo-msg" class="msg" aria-live="polite"></div>
+              </form>
+            </section>
+
+            <section class="panel">
+              <h2 class="h2">Tus cultivos</h2>
+              <div id="list-msg" class="msg" aria-live="polite"></div>
+              <div id="cultivos-list" class="list"></div>
+            </section>
           </div>
-
-          <div class="actions">
-            <button id="go-campos" class="btn btn-ghost" type="button">Campos</button>
-            <button id="refresh" class="btn btn-ghost" type="button">Actualizar</button>
-            <button id="logout" class="btn btn-ghost" type="button">Cerrar sesión</button>
-          </div>
-        </header>
-
-        <div class="grid">
-          <section class="panel">
-            <h2 class="h2">Nuevo cultivo</h2>
-
-            <form id="cultivo-form" class="form">
-              <label class="field">
-                <span>Nombre</span>
-                <input id="cultivo-nombre" type="text" required />
-              </label>
-
-              <label class="field">
-                <span>Observaciones</span>
-                <textarea id="cultivo-obs" rows="3"></textarea>
-              </label>
-
-              <button id="cultivo-btn" class="btn" type="submit">Crear cultivo</button>
-              <div id="cultivo-msg" class="msg" aria-live="polite"></div>
-            </form>
-          </section>
-
-          <section class="panel">
-            <h2 class="h2">Tus cultivos</h2>
-            <div id="list-msg" class="msg" aria-live="polite"></div>
-            <div id="cultivos-list" class="list"></div>
-          </section>
-        </div>
+        </section>
       </section>
 
       <!-- Modal: Editar cultivo -->
@@ -105,11 +104,6 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
       </div>
     </main>
   `;
-
-  // Top actions
-  const goCamposBtn = document.querySelector("#go-campos");
-  const refreshBtn = document.querySelector("#refresh");
-  const logoutBtn = document.querySelector("#logout");
 
   // List
   const listEl = document.querySelector("#cultivos-list");
@@ -427,13 +421,15 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
     }
   });
 
-  // Top actions
-  goCamposBtn.addEventListener("click", () => onGoCampos?.());
-  refreshBtn.addEventListener("click", loadCultivos);
-
-  logoutBtn.addEventListener("click", () => {
-    logout();
-    onLogout?.();
+  // ✅ Conectar Topbar (en lugar de botones viejos)
+  wireTopbar({
+    onGoCampos: () => onGoCampos?.(),
+    onGoCultivos: () => {}, // ya estás en Cultivos
+    onRefresh: loadCultivos,
+    onLogout: () => {
+      logout();
+      onLogout?.();
+    },
   });
 
   loadCultivos();
