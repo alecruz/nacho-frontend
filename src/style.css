@@ -794,3 +794,180 @@ body{
   .grid{ grid-template-columns: 1fr; }
   .content{ padding: 18px 14px 28px; }
 }
+
+.pagebar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:12px;
+}
+
+.pagebar-title{
+  flex:1;
+  text-align:center;
+  margin:0;
+  font-weight:700;
+}
+
+.pagebar-spacer{
+  width:90px;
+}
+
+/* =========================
+   CARD CAMPO — estilo como imagen
+   ========================= */
+
+.campo-resumen{
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 18px;
+  padding: 22px 22px 18px;
+  box-shadow: 0 14px 35px rgba(0,0,0,0.12);
+}
+
+/* Header: izquierda (volver + título) y derecha (acciones) */
+.campo-resumen-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+}
+
+/* Volver arriba, separado del título */
+.campo-resumen-left{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+}
+
+.campo-btn-volver{
+  padding: 4px 10px;
+  font-size: 13px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+/* Título grande y verde */
+.campo-resumen-title{
+  margin:0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: #2F5D3A;
+}
+
+/* Divisor */
+.campo-divider{
+  border: 0;
+  height: 1px;
+  background: rgba(0,0,0,0.12);
+  margin: 14px 0 12px;
+}
+
+/* Texto cuerpo (superficie/obs) */
+.campo-resumen-body{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.campo-resumen-line{
+  font-size: 15px;
+  color: #2b3a31;
+}
+
+.campo-resumen-line .muted{
+  color: #6b7a70;
+  font-weight: 500;
+}
+
+/* Acciones tipo “cuadrados” como en la imagen */
+.campo-actions .icon-action{
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.14);
+  background: rgba(255,255,255,0.75);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.10);
+  font-size: 18px;
+}
+
+.campo-actions .icon-action:hover{
+  background: rgba(47,93,58,0.10);
+}
+
+.campo-actions .icon-action.danger{
+  background: rgba(255,255,255,0.75);
+  border-color: rgba(0,0,0,0.14);
+}
+
+.campo-actions .icon-action.danger:hover{
+  background: rgba(192,57,43,0.10);
+}
+
+/* Responsive */
+@media (max-width: 720px){
+  .campo-resumen-title{ font-size: 30px; }
+  .campo-resumen-line{ font-size: 18px; }
+  .campo-actions .icon-action{ width: 46px; height: 46px; }
+}
+
+/* =========================
+   FIX – PANTALLA LOTES
+   (no rompe Campos/Cultivos)
+   ========================= */
+
+.lotes-layout{
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.lotes-card{
+  margin: 0;
+}
+
+.lotes-header{
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.lotes-title{
+  display:flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.lotes-h2{
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.lotes-btn-nuevo{
+  width: auto;
+  min-width: 220px;
+  margin-top: 0;
+  border-radius: 12px;
+}
+
+.lotes-btn-volver{
+  width: auto;
+  margin-top: 0;
+  border-radius: 12px;
+}
+
+@media (max-width: 700px){
+  .lotes-btn-nuevo{
+    min-width: 160px;
+  }
+  .pagebar-spacer{
+    width: 60px;
+  }
+}
+

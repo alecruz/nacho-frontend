@@ -2,7 +2,7 @@
 import { getAuthHeaders, logout } from "../auth/auth";
 import { renderTopbar, wireTopbar } from "../ui/header";
 
-export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
+export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLotes  }) {
   const app = document.querySelector("#app");
 
   app.innerHTML = `
@@ -160,6 +160,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
               </div>
 
               <div class="item-actions-inline">
+                <button class="icon-action js-lotes" type="button" title="Ver lotes" aria-label="Ver lotes">🧩</button>
                 <button class="icon-action js-edit" type="button" title="Editar campo" aria-label="Editar">✏️</button>
                 <button class="icon-action danger js-delete" type="button" title="Eliminar campo" aria-label="Eliminar">🗑️</button>
               </div>
@@ -184,6 +185,11 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos }) {
       document.querySelector("#edit-obs").value = item.getAttribute("data-observaciones") || "";
       document.querySelector("#edit-msg").textContent = "";
       openModal(modalEdit);
+      return;
+    }
+
+    if (e.target.classList.contains("js-lotes")) {
+      onGoLotes?.(id);
       return;
     }
 

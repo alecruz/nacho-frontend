@@ -2,6 +2,7 @@ import "./style.css";
 import { isAuthenticated } from "./auth/auth";
 import { renderCamposPage } from "./pages/campos";
 import { renderCultivosPage } from "./pages/cultivos";
+import { renderLotesPage } from "./pages/lotes";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -12,6 +13,7 @@ function goToCampos() {
     BACKEND_URL,
     onLogout: () => renderLoginPage(),
     onGoCultivos: () => goToCultivos(),
+    onGoLotes: (campoId) => goToLotes(campoId),
   });
 }
 
@@ -20,6 +22,16 @@ function goToCultivos() {
     BACKEND_URL,
     onLogout: () => renderLoginPage(),
     onGoCampos: () => goToCampos(),
+  });
+}
+
+function goToLotes(campoId) {
+  renderLotesPage({
+    BACKEND_URL,
+    campoId,
+    onLogout: () => renderLoginPage(),
+    onGoCampos: () => goToCampos(),
+    onGoCultivos: () => goToCultivos(),
   });
 }
 
