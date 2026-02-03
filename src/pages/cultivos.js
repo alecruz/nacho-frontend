@@ -47,6 +47,9 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
         </section>
       </section>
 
+      <!-- ✅ Toast (arriba a la derecha) -->
+      <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
       <!-- Modal: Editar cultivo -->
       <div id="modal-edit" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-edit-title">
         <div class="modal" tabindex="-1">
@@ -105,20 +108,39 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
     </main>
   `;
 
-  // List
+  /* =========================
+     Toast helper
+     ========================= */
+  const toastEl = document.querySelector("#toast");
+  let toastTimer = null;
+
+  function showToast(text, type = "success", ms = 2400) {
+    if (!toastEl) return;
+
+    if (toastTimer) clearTimeout(toastTimer);
+
+    toastEl.textContent = text || "";
+    toastEl.className = `toast ${type}`; // base + variante
+    toastEl.classList.remove("hidden");
+
+    toastTimer = setTimeout(() => {
+      toastEl.classList.add("hidden");
+    }, ms);
+  }
+
+  /* =========================
+     List / Form refs
+     ========================= */
   const listEl = document.querySelector("#cultivos-list");
   const listMsg = document.querySelector("#list-msg");
 
-  // Create form
   const form = document.querySelector("#cultivo-form");
   const msg = document.querySelector("#cultivo-msg");
   const btn = document.querySelector("#cultivo-btn");
 
-  // Modals
   const modalEdit = document.querySelector("#modal-edit");
   const modalDelete = document.querySelector("#modal-delete");
 
-  // Edit modal inputs
   const editForm = document.querySelector("#edit-form");
   const editId = document.querySelector("#edit-id");
   const editNombre = document.querySelector("#edit-nombre");
@@ -126,7 +148,6 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
   const editMsg = document.querySelector("#edit-msg");
   const editSaveBtn = document.querySelector("#edit-save");
 
-  // Delete modal
   const deleteName = document.querySelector("#delete-name");
   const deleteMsg = document.querySelector("#delete-msg");
   const deleteBtn = document.querySelector("#delete-confirm");
@@ -167,7 +188,6 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
     closeModal(modalDelete);
   }
 
-  // Close modal: click backdrop or [data-close]
   [modalEdit, modalDelete].forEach((m) => {
     m.addEventListener("click", (e) => {
       const target = e.target;
@@ -177,7 +197,6 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
     });
   });
 
-  // ESC closes modals
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeAllModals();
   });
@@ -262,7 +281,6 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
     const id = item.getAttribute("data-id");
     if (!id) return;
 
-    // Edit
     if (e.target.classList.contains("js-edit")) {
       editId.value = id;
       editNombre.value = item.getAttribute("data-nombre") || "";
@@ -272,7 +290,6 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
       return;
     }
 
-    // Deactivate
     if (e.target.classList.contains("js-delete")) {
       deleteBtn.setAttribute("data-id", id);
       deleteName.textContent = item.getAttribute("data-nombre") || "este cultivo";
@@ -319,7 +336,9 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
         return;
       }
 
-      setFormMsg("Cultivo creado ✅", "success");
+      // ✅ Toast arriba a la derecha (en vez de msg debajo del botón)
+      setFormMsg("", "info");
+      showToast("Cultivo creado ✅", "success");
       form.reset();
       await loadCultivos();
     } catch (err) {
@@ -371,7 +390,10 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
 
       closeModal(modalEdit);
       await loadCultivos();
-      setListMsg("Cultivo actualizado ✅", "success");
+
+      // ✅ Toast sutil
+      setListMsg("", "info");
+      showToast("Cultivo actualizado ✅", "success");
     } catch (err) {
       console.error(err);
       setEditMsg("Error de conexión.", "error");
@@ -411,7 +433,10 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
 
       closeModal(modalDelete);
       await loadCultivos();
-      setListMsg("Cultivo desactivado ✅", "success");
+
+      // ✅ Toast sutil
+      setListMsg("", "info");
+      showToast("Cultivo desactivado ✅", "success");
     } catch (err) {
       console.error(err);
       setDeleteMsg("Error de conexión.", "error");
@@ -421,7 +446,7 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
     }
   });
 
-  // ✅ Conectar Topbar (en lugar de botones viejos)
+  // ✅ Conectar Topbar
   wireTopbar({
     onGoCampos: () => onGoCampos?.(),
     onGoCultivos: () => {}, // ya estás en Cultivos

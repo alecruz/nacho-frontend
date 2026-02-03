@@ -2,7 +2,7 @@
 import { getAuthHeaders, logout } from "../auth/auth";
 import { renderTopbar, wireTopbar } from "../ui/header";
 
-export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLotes  }) {
+export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLotes }) {
   const app = document.querySelector("#app");
 
   app.innerHTML = `
@@ -51,6 +51,9 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
           </div>
         </section>
       </section>
+
+      <!-- ✅ Toast (arriba derecha) -->
+      <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
       <!-- Modal: Editar campo -->
       <div id="modal-edit" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-edit-title">
@@ -121,6 +124,25 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
   const form = document.querySelector("#campo-form");
   const msg = document.querySelector("#campo-msg");
   const btn = document.querySelector("#campo-btn");
+
+  // ✅ Toast
+  const toastEl = document.querySelector("#toast");
+  let toastTimer = null;
+
+  function showToast(text, type = "success", ms = 2500) {
+    if (!toastEl) return;
+
+    // limpiar timer anterior
+    if (toastTimer) clearTimeout(toastTimer);
+
+    toastEl.textContent = text || "";
+    toastEl.className = `toast ${type}`;
+    toastEl.classList.remove("hidden");
+
+    toastTimer = setTimeout(() => {
+      toastEl.classList.add("hidden");
+    }, ms);
+  }
 
   function setListMsg(text, type = "info") {
     listMsg.textContent = text || "";
@@ -195,7 +217,8 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
 
     if (e.target.classList.contains("js-delete")) {
       document.querySelector("#delete-confirm").setAttribute("data-id", id);
-      document.querySelector("#delete-name").textContent = item.getAttribute("data-nombre") || "este campo";
+      document.querySelector("#delete-name").textContent =
+        item.getAttribute("data-nombre") || "este campo";
       document.querySelector("#delete-msg").textContent = "";
       openModal(modalDelete);
       return;
@@ -311,7 +334,10 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
         return;
       }
 
-      setFormMsg("Campo creado ✅", "success");
+      // ✅ éxito: toast arriba a la derecha
+      setFormMsg("", "info");
+      showToast("Campo creado ✅", "success", 2500);
+
       form.reset();
       await loadCampos();
     } catch (err) {
@@ -374,10 +400,11 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
         return;
       }
 
-      setEditMsg("Guardado ✅", "success");
       closeModal(modalEdit);
       await loadCampos();
-      setListMsg("Campo actualizado ✅", "success");
+
+      // ✅ toast sutil (en lugar de "Campo actualizado" en la lista)
+      showToast("Campo actualizado ✅", "success", 2500);
     } catch (err) {
       console.error(err);
       setEditMsg("Error de conexión.", "error");
@@ -424,7 +451,9 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
 
       closeModal(modalDelete);
       await loadCampos();
-      setListMsg("Campo eliminado ✅", "success");
+
+      // ✅ toast sutil
+      showToast("Campo eliminado ✅", "success", 2500);
     } catch (err) {
       console.error(err);
       setDeleteMsg("Error de conexión.", "error");
