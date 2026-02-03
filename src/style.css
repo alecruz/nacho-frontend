@@ -494,7 +494,7 @@ body{
   font-size: 16px;
 }
 
-/* ✅ Compacto en "Nuevo lote" */
+/* Compacto en modal */
 .modal .form{ gap: 8px; }
 .modal .field-row{ margin-bottom: 2px; }
 
@@ -506,101 +506,6 @@ body{
   overflow-y: hidden;
   line-height: 1.4;
 }
-
-/* =========================
-   COLLAPSE (CULTIVOS EN MODAL)
-   ========================= */
-
-/* Base del toggle */
-.collapse-toggle{
-  width: 100%;
-  margin-top: 10px;
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-align: left;
-
-  /* Igual que "Cultivos agregados" */
-  font-size: 15px;
-  font-weight: 600;
-  color: #2F5D3A;
-  margin-bottom: 10px;
-  padding-bottom: 4px;
-  border-bottom: 1px solid rgba(47,93,58,0.15);
-}
-
-/* ✅ Pediste: "Datos de cultivo" más grande */
-#cultivo-toggle{
-  font-size: 17px;
-  font-weight: 700;
-}
-
-/* Ocultamos el span de flecha */
-.collapse-toggle .chev{ display:none; }
-
-/* Flecha como imagen */
-#cultivo-toggle::before{
-  content:"";
-  width: 18px;
-  height: 18px;
-  display: inline-block;
-  margin-right: 6px;
-
-  background: url("/img/chevron-down.svg") no-repeat center;
-  background-size: contain;
-
-  transition: transform .18s ease;
-}
-
-/* Rotación al abrir */
-#cultivo-toggle[aria-expanded="true"]::before{
-  transform: rotate(180deg);
-}
-
-.collapse-panel{ padding-top: 12px; }
-
-.help{
-  margin: 6px 0 0;
-  font-size: 13px;
-}
-
-/* Separación consistente en panel cultivo */
-#cultivo-panel .field-row{ margin-bottom: 14px; }
-
-/* Fila agregar cultivo */
-.cultivo-add-row{
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
-
-.btn-add-cultivo{
-  white-space: nowrap;
-  padding: 8px 12px;
-}
-
-.cultivos-table-wrap{
-  margin-top: 22px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(0,0,0,0.08);
-}
-
-/* Subtítulo "Cultivos agregados" */
-.cultivos-table-title{
-  font-size: 15px;
-  font-weight: 600;
-  color: #2F5D3A;
-  margin: 14px 0 10px;
-  letter-spacing: 0.2px;
-  border-bottom: 1px solid rgba(47,93,58,0.15);
-  padding-bottom: 4px;
-}
-
-.list.compact .item{ padding: 10px 12px; }
-.empty.small{ font-size: 13px; padding: 10px 0; }
 
 /* =========================
    SELECT (igual a inputs)
@@ -645,6 +550,107 @@ select:disabled{
   color: #8a948d;
   cursor: not-allowed;
 }
+
+/* =========================
+   COLLAPSE (CULTIVOS EN MODAL) - CONSOLIDADO
+   ========================= */
+.collapse-toggle{
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 4px;            /* ✅ antes duplicado */
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+
+  font-size: 17px;               /* ✅ pediste más grande */
+  font-weight: 700;
+  color: #2F5D3A;
+
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(47,93,58,0.15);
+}
+
+.collapse-toggle .chev{ display:none; }
+
+#cultivo-toggle::before{
+  content:"";
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  margin-right: 6px;
+
+  background: url("/img/chevron-down.svg") no-repeat center;
+  background-size: contain;
+
+  transition: transform .18s ease;
+}
+
+#cultivo-toggle[aria-expanded="true"]::before{
+  transform: rotate(180deg);
+}
+
+#cultivo-panel{
+  padding-top: 2px;              /* ✅ antes duplicado */
+  margin-top: 0;
+}
+
+.help{
+  margin: 6px 0 0;
+  font-size: 13px;
+}
+
+/* Ajustes de separación en filas dentro del panel */
+#cultivo-panel .field-row{
+  margin-bottom: 10px;           /* ✅ consolidado (antes 10/14/18) */
+}
+#cultivo-panel .field-row:first-child{
+  margin-top: 0;
+}
+
+/* Fila agregar cultivo */
+.cultivo-add-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.btn-add-cultivo{
+  white-space: nowrap;
+  height: 40px;                  /* ✅ mismo alto que input */
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.cultivo-add-row input{
+  height: 40px;                  /* ✅ mismo alto */
+}
+
+/* Tabla cultivos: consolidado (antes había override) */
+.cultivos-table-wrap{
+  margin-top: 22px;
+  padding-top: 0;                /* ✅ sin espacio fantasma */
+  border-top: none;              /* ✅ consolidado */
+}
+
+.cultivos-table-title{
+  font-size: 15px;
+  font-weight: 600;
+  color: #2F5D3A;
+  margin: 14px 0 10px;
+  letter-spacing: 0.2px;
+  border-bottom: 1px solid rgba(47,93,58,0.15);
+  padding-bottom: 4px;
+}
+
+.list.compact .item{ padding: 10px 12px; }
+.empty.small{ font-size: 13px; padding: 10px 0; }
 
 /* =========================
    PANTALLA LOTES
@@ -709,23 +715,19 @@ select:disabled{
 }
 
 .campo-resumen-left{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-}
-
-.campo-btn-volver{
-  padding: 4px 10px;
-  font-size: 13px;
-  border-radius: 10px;
-  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* centra horizontal */
+  width: 100%;
 }
 
 .campo-resumen-title{
-  margin:0;
+  margin: 0;
   font-size: 22px;
   font-weight: 700;
   color: #2F5D3A;
+  text-align: center;    /* centra el texto */
+  width: 100%;
 }
 
 .campo-divider{
@@ -735,6 +737,7 @@ select:disabled{
   margin: 14px 0 12px;
 }
 
+/* ✅ Default del body (columna) */
 .campo-resumen-body{
   display:flex;
   flex-direction:column;
@@ -749,6 +752,126 @@ select:disabled{
 .campo-resumen-line .muted{
   color: #6b7a70;
   font-weight: 500;
+}
+
+/* ✅ ESTE ES EL KEY: layout 2 columnas (datos + acciones a la derecha) */
+.campo-resumen-body.campo-resumen-body-row{
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;       /* ✅ misma altura que “Superficie” */
+  gap: 16px;
+}
+
+.campo-resumen-data{
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* ✅ Fuerza a que los botones queden en el rectángulo verde */
+.campo-actions-right{
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;            /* ✅ NO baja */
+}
+
+/* Si obs es larguísima, evita que rompa la fila */
+#campoObs{
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================
+   LOTES: cards tipo imagen
+   ========================= */
+.lotes-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+@media (max-width: 900px){
+  .lotes-grid{ grid-template-columns: 1fr; }
+}
+
+.lote-card{
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.10);
+  padding: 16px 16px 14px;
+}
+
+.lote-card-top{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.lote-card-title{
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #2F5D3A;
+}
+
+.lote-card-body{
+  display:flex;
+  flex-direction:column;
+  gap: 6px;
+  color: #2b3a31;
+}
+
+.lote-card-line{
+  font-size: 15px;
+}
+
+.lote-card-obs{
+  font-size: 15px;
+  color: #5f6f66;
+}
+
+.lote-card-divider{
+  height: 1px;
+  background: rgba(0,0,0,0.12);
+  margin: 12px 0 10px;
+}
+
+.lote-card-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+}
+
+.lote-card-actions{
+  display:flex;
+  gap: 6px;
+}
+
+.lote-card-cultivo-line{
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.cultivo-label{
+  min-width: 60px;
+  font-weight: 600;
+  color: #2F5D3A;
+}
+
+.cultivo-nombre{
+  color: var(--text);
 }
 
 /* =========================
@@ -915,68 +1038,39 @@ select:disabled{
   .login-header h1{ font-size: 26px; }
 }
 
-/* =========================
-   Menos distancia entre la línea (Datos de cultivo)
-   y el label/combobox de Cultivo
-   ========================= */
+.toast{
+  position: fixed;
+  top: 92px;             /* abajo de la topbar */
+  right: 18px;
+  z-index: 999;
 
-/* 1) Reduce el espacio debajo del subtítulo (donde está la línea) */
-#cultivo-toggle{
-  margin-bottom: 4px !important;   /* antes 10px */
+  max-width: min(360px, calc(100vw - 36px));
+  padding: 10px 12px;
+
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 14px 40px rgba(0,0,0,.18);
+
+  font-size: 14px;
+  color: var(--text);
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity .18s ease, transform .18s ease;
 }
 
-/* 2) Reduce el espacio arriba del panel (primer campo) */
-#cultivo-panel{
-  padding-top: 2px !important;     /* antes 12px */
-  margin-top: 0 !important;
+.toast.hidden{
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
 }
 
-/* 3) Asegura que el primer field no agregue separación extra */
-#cultivo-panel .field-row:first-child{
-  margin-top: 0 !important;
+/* variantes */
+.toast.success{
+  border-color: rgba(6,118,71,.25);
 }
 
-/* =========================
-   Panel cultivo: reducir distancia entre
-   "Cultivo" (combo) y "Superficie cultivada"
-   ========================= */
-
-/* La 1ra fila (combo) que no deje tanto margen abajo */
-#cultivo-panel .field-row:nth-of-type(1){
-  margin-bottom: 10px !important;   /* antes 14/18 */
+.toast.error{
+  border-color: rgba(192,57,43,.30);
 }
-
-/* La 2da fila (superficie) puede quedar normal o un poco menor */
-#cultivo-panel .field-row:nth-of-type(2){
-  margin-bottom: 10px !important;
-}
-
-/* =========================
-   Botón "+ Agregar" = mismo alto
-   que input Superficie cultivada
-   ========================= */
-
-.cultivo-add-row input,
-.cultivo-add-row .btn-add-cultivo{
-  height: 40px;          /* mismo alto */
-}
-
-/* Ajuste fino de padding del botón */
-.btn-add-cultivo{
-  padding: 0 14px;       /* vertical 0 para no agrandar */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-}
-
-/* =========================
-   Quitar línea superior sobre
-   "Cultivos agregados"
-   ========================= */
-
-.cultivos-table-wrap{
-  border-top: none !important;
-  padding-top: 0 !important;   /* evita que quede espacio fantasma */
-}
-
