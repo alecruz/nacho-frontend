@@ -259,7 +259,7 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
       }
 
       if (!resp.ok) {
-        setListMsg(data.error || "No se pudieron cargar los cultivos.", "error");
+        setListMsg(data.message || data.error || "No se pudieron cargar los cultivos.", "error");
         renderList([]);
         return;
       }
@@ -319,7 +319,7 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
     try {
       const resp = await fetch(`${BACKEND_URL}/cultivos`, {
         method: "POST",
-        headers: getAuthHeaders(),
+        headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
         body: JSON.stringify({ nombre, observaciones }),
       });
 
@@ -332,7 +332,12 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
       }
 
       if (!resp.ok) {
-        setFormMsg(data.error || "No se pudo crear el cultivo.", "error");
+        const msgText =
+          data?.message ||
+          data?.error ||
+          (resp.status === 409 ? "Ya existe un cultivo activo con ese nombre." : null) ||
+          "No se pudo crear el cultivo.";
+        setFormMsg(msgText, "error");
         return;
       }
 
@@ -371,7 +376,7 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
     try {
       const resp = await fetch(`${BACKEND_URL}/cultivos/${id}`, {
         method: "PUT",
-        headers: getAuthHeaders(),
+        headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
         body: JSON.stringify({ nombre, observaciones }),
       });
 
@@ -384,7 +389,12 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
       }
 
       if (!resp.ok) {
-        setEditMsg(data.error || "No se pudo guardar.", "error");
+        const msgText =
+          data?.message ||
+          data?.error ||
+          (resp.status === 409 ? "Ya existe un cultivo activo con ese nombre." : null) ||
+          "No se pudo guardar.";
+        setEditMsg(msgText, "error");
         return;
       }
 
@@ -427,7 +437,7 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
       }
 
       if (!resp.ok) {
-        setDeleteMsg(data.error || "No se pudo desactivar.", "error");
+        setDeleteMsg(data?.message || data?.error || "No se pudo desactivar.", "error");
         return;
       }
 

@@ -132,7 +132,6 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
   function showToast(text, type = "success", ms = 2500) {
     if (!toastEl) return;
 
-    // limpiar timer anterior
     if (toastTimer) clearTimeout(toastTimer);
 
     toastEl.textContent = text || "";
@@ -279,7 +278,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
       }
 
       if (!resp.ok) {
-        setListMsg(data.error || "No se pudieron cargar los campos.", "error");
+        setListMsg(data?.message || data?.error || "No se pudieron cargar los campos.", "error");
         renderList([]);
         return;
       }
@@ -317,7 +316,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
     try {
       const resp = await fetch(`${BACKEND_URL}/campos`, {
         method: "POST",
-        headers: getAuthHeaders(),
+        headers: { ...getAuthHeaders(), "Content-Type": "application/json" }, // ✅ fix
         body: JSON.stringify({ nombre, superficie, observaciones }),
       });
 
@@ -330,7 +329,12 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
       }
 
       if (!resp.ok) {
-        setFormMsg(data.error || "No se pudo crear el campo.", "error");
+        // ✅ mensaje amigable para duplicado
+        if (resp.status === 409 && data?.code === "CAMPO_DUPLICADO") {
+          setFormMsg(data?.message || "Ya existe un campo activo con ese nombre.", "error");
+          return;
+        }
+        setFormMsg(data?.message || data?.error || "No se pudo crear el campo.", "error");
         return;
       }
 
@@ -383,7 +387,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
     try {
       const resp = await fetch(`${BACKEND_URL}/campos/${id}`, {
         method: "PUT",
-        headers: getAuthHeaders(),
+        headers: { ...getAuthHeaders(), "Content-Type": "application/json" }, // ✅ fix
         body: JSON.stringify({ nombre, superficie, observaciones }),
       });
 
@@ -396,14 +400,18 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
       }
 
       if (!resp.ok) {
-        setEditMsg(data.error || "No se pudo guardar.", "error");
+        // ✅ mensaje amigable para duplicado
+        if (resp.status === 409 && data?.code === "CAMPO_DUPLICADO") {
+          setEditMsg(data?.message || "Ya existe un campo activo con ese nombre.", "error");
+          return;
+        }
+        setEditMsg(data?.message || data?.error || "No se pudo guardar.", "error");
         return;
       }
 
       closeModal(modalEdit);
       await loadCampos();
 
-      // ✅ toast sutil (en lugar de "Campo actualizado" en la lista)
       showToast("Campo actualizado ✅", "success", 2500);
     } catch (err) {
       console.error(err);
@@ -445,14 +453,13 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
       }
 
       if (!resp.ok) {
-        setDeleteMsg(data.error || "No se pudo eliminar.", "error");
+        setDeleteMsg(data?.message || data?.error || "No se pudo eliminar.", "error");
         return;
       }
 
       closeModal(modalDelete);
       await loadCampos();
 
-      // ✅ toast sutil
       showToast("Campo eliminado ✅", "success", 2500);
     } catch (err) {
       console.error(err);

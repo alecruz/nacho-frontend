@@ -257,7 +257,6 @@ export function renderLotesPage({ BACKEND_URL, campoId, onLogout, onGoCampos, on
     }, ms);
   }
 
-
   /* =========================
      Referencias DOM
      ========================= */
@@ -398,7 +397,7 @@ export function renderLotesPage({ BACKEND_URL, campoId, onLogout, onGoCampos, on
     try {
       const resp = await fetch(`${BACKEND_URL}/campos/${id}`, {
         method: "PUT",
-        headers: getAuthHeaders(),
+        headers: { ...getAuthHeaders(), "Content-Type": "application/json" }, // ✅ fix
         body: JSON.stringify({
           nombre,
           superficie: nuevaSup,
@@ -415,7 +414,7 @@ export function renderLotesPage({ BACKEND_URL, campoId, onLogout, onGoCampos, on
       }
 
       if (!resp.ok) {
-        setEditMsg(data?.error || "No se pudo guardar.", "error");
+        setEditMsg(data?.message || data?.error || "No se pudo guardar.", "error"); // ✅ fix
         return;
       }
 
@@ -543,7 +542,7 @@ export function renderLotesPage({ BACKEND_URL, campoId, onLogout, onGoCampos, on
       }
 
       if (!resp.ok) {
-        setDeleteMsg(data?.error || "No se pudo eliminar el lote.", "error");
+        setDeleteMsg(data?.message || data?.error || "No se pudo eliminar el lote.", "error"); // ✅ fix
         return;
       }
 
@@ -732,7 +731,7 @@ export function renderLotesPage({ BACKEND_URL, campoId, onLogout, onGoCampos, on
       }
 
       if (!resp.ok) {
-        setModalMsg(data?.error || "No se pudo cargar el lote.", "error");
+        setModalMsg(data?.message || data?.error || "No se pudo cargar el lote.", "error"); // ✅ fix
         return;
       }
 
@@ -803,7 +802,7 @@ export function renderLotesPage({ BACKEND_URL, campoId, onLogout, onGoCampos, on
       }
 
       if (!resp.ok) {
-        setModalMsg(data.error || "No se pudieron cargar los cultivos.", "error");
+        setModalMsg(data?.message || data?.error || "No se pudieron cargar los cultivos.", "error"); // ✅ fix
         return;
       }
 
@@ -901,7 +900,15 @@ export function renderLotesPage({ BACKEND_URL, campoId, onLogout, onGoCampos, on
       }
 
       if (!resp.ok) {
-        setModalMsg(data.error || "No se pudo guardar el lote.", "error");
+        if (resp.status === 409 && data?.code === "LOTE_DUPLICADO") {
+          setModalMsg(
+            data?.message || "Ya existe un lote activo con ese nombre en este campo.",
+            "error"
+          );
+          return;
+        }
+
+        setModalMsg(data?.message || data?.error || "No se pudo guardar el lote.", "error");
         return;
       }
 
@@ -962,7 +969,7 @@ export function renderLotesPage({ BACKEND_URL, campoId, onLogout, onGoCampos, on
       }
 
       if (!resp.ok) {
-        setMsg(data?.error || "No se pudieron cargar los lotes.", "error");
+        setMsg(data?.message || data?.error || "No se pudieron cargar los lotes.", "error"); // ✅ fix
         renderLotesCards([]);
         lotesCache = [];
         return;
