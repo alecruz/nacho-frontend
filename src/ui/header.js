@@ -17,6 +17,9 @@ export function renderTopbar({ active = "campos" }) {
         <button id="nav-cultivos" class="tab ${active === "cultivos" ? "is-active" : ""}" type="button">
           Cultivos
         </button>
+        <button id="nav-insumos" class="tab ${active === "insumos" ? "is-active" : ""}" type="button">
+          Insumos
+        </button>
       </nav>
 
       <div class="topbar__right">
@@ -27,9 +30,16 @@ export function renderTopbar({ active = "campos" }) {
   `;
 }
 
-export function wireTopbar({ onGoCampos, onGoCultivos, onRefresh, onLogout }) {
+export function wireTopbar({
+  onGoCampos,
+  onGoCultivos,
+  onGoInsumos,
+  onRefresh,
+  onLogout
+}) {
   document.querySelector("#nav-campos")?.addEventListener("click", () => onGoCampos?.());
   document.querySelector("#nav-cultivos")?.addEventListener("click", () => onGoCultivos?.());
+  document.querySelector("#nav-insumos")?.addEventListener("click", () => onGoInsumos?.());
   document.querySelector("#nav-refresh")?.addEventListener("click", () => onRefresh?.());
   document.querySelector("#nav-logout")?.addEventListener("click", () => onLogout?.());
 }

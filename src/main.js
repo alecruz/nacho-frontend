@@ -3,6 +3,7 @@ import { isAuthenticated } from "./auth/auth";
 import { renderCamposPage } from "./pages/campos";
 import { renderCultivosPage } from "./pages/cultivos";
 import { renderLotesPage } from "./pages/lotes";
+import { renderInsumosPage } from "./pages/insumos"; // 👈 NUEVO
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -13,6 +14,7 @@ function goToCampos() {
     BACKEND_URL,
     onLogout: () => renderLoginPage(),
     onGoCultivos: () => goToCultivos(),
+    onGoInsumos: () => goToInsumos(), // 👈 NUEVO
     onGoLotes: (campoId) => goToLotes(campoId),
   });
 }
@@ -22,6 +24,16 @@ function goToCultivos() {
     BACKEND_URL,
     onLogout: () => renderLoginPage(),
     onGoCampos: () => goToCampos(),
+    onGoInsumos: () => goToInsumos(), // 👈 NUEVO
+  });
+}
+
+function goToInsumos() {
+  renderInsumosPage({
+    BACKEND_URL,
+    onLogout: () => renderLoginPage(),
+    onGoCampos: () => goToCampos(),
+    onGoCultivos: () => goToCultivos(),
   });
 }
 
@@ -32,6 +44,7 @@ function goToLotes(campoId) {
     onLogout: () => renderLoginPage(),
     onGoCampos: () => goToCampos(),
     onGoCultivos: () => goToCultivos(),
+    onGoInsumos: () => goToInsumos(), // 👈 NUEVO
   });
 }
 
@@ -84,7 +97,7 @@ function renderLoginPage() {
           <button id="login-button" class="login-btn-primary" type="submit">Ingresar</button>
 
           <div id="msg" class="login-msg" aria-live="polite"></div>
-        
+
         </form>
 
         <footer class="login-footer">

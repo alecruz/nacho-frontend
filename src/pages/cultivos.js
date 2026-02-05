@@ -2,7 +2,7 @@
 import { getAuthHeaders, logout } from "../auth/auth";
 import { renderTopbar, wireTopbar } from "../ui/header";
 
-export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
+export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos, onGoInsumos}) {
   const app = document.querySelector("#app");
 
   app.innerHTML = `
@@ -460,6 +460,7 @@ export function renderCultivosPage({ BACKEND_URL, onLogout, onGoCampos }) {
   wireTopbar({
     onGoCampos: () => onGoCampos?.(),
     onGoCultivos: () => {}, // ya estás en Cultivos
+    onGoInsumos: () => onGoInsumos?.(),
     onRefresh: loadCultivos,
     onLogout: () => {
       logout();

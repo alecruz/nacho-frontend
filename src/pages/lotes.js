@@ -2,7 +2,7 @@
 import { getAuthHeaders, logout } from "../auth/auth";
 import { renderTopbar, wireTopbar } from "../ui/header";
 
-export function renderLotesPage({ BACKEND_URL, campoId, onLogout, onGoCampos, onGoCultivos }) {
+export function renderLotesPage({ BACKEND_URL, campoId, onLogout, onGoCampos, onGoCultivos, onGoInsumos}) {
   const app = document.querySelector("#app");
   const campoIdNum = Number(campoId);
 
@@ -992,6 +992,7 @@ export function renderLotesPage({ BACKEND_URL, campoId, onLogout, onGoCampos, on
   wireTopbar({
     onGoCampos,
     onGoCultivos,
+    onGoInsumos,
     onRefresh: loadLotes,
     onLogout: () => {
       logout();

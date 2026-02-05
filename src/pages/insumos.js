@@ -1,52 +1,88 @@
-// src/pages/campos.js
+// src/pages/insumos.js
 import { getAuthHeaders, logout } from "../auth/auth";
 import { renderTopbar, wireTopbar } from "../ui/header";
 
-export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLotes, onGoInsumos}) {
+const INSUMO_CATEGORIAS = [
+  "Fertilizante",
+  "Herbicida",
+  "Insecticida",
+  "Fungicida",
+  "Semilla",
+  "Combustible",
+  "Lubricante",
+  "Otro",
+];
+
+const INSUMO_UNIDADES = [
+  "kg",
+  "g",
+  "L",
+  "mL",  
+  "unidad",
+];
+
+export function renderInsumosPage({
+  BACKEND_URL,
+  onLogout,
+  onGoCampos,
+  onGoCultivos,
+  onGoInsumos,
+}) {
   const app = document.querySelector("#app");
 
   app.innerHTML = `
     <main class="shell">
-      ${renderTopbar({ active: "campos" })}
+      ${renderTopbar({ active: "insumos" })}
 
       <section class="content">
         <section class="card card-wide">
           <header class="header">
             <div>
-              <h1>Campos</h1>
-              <p>Listado de campos del cliente.</p>
+              <h1>Insumos</h1>
+              <p>Catálogo de insumos del cliente.</p>
             </div>
           </header>
 
           <div class="grid">
             <section class="panel">
-              <h2 class="h2">Nuevo campo</h2>
+              <h2 class="h2">Nuevo insumo</h2>
 
-              <form id="campo-form" class="form">
+              <form id="insumo-form" class="form">
                 <label class="field">
                   <span>Nombre</span>
-                  <input id="campo-nombre" type="text" required />
+                  <input id="insumo-nombre" type="text" required />
                 </label>
 
                 <label class="field">
-                  <span>Superficie (ha)</span>
-                  <input id="campo-superficie" type="number" step="0.01" min="0" required />
+                  <span>Categoría</span>
+                  <select id="insumo-categoria" class="select">
+                    <option value="">Seleccionar categoría...</option>
+                    ${INSUMO_CATEGORIAS.map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("")}
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>Unidad</span>
+                  <select id="insumo-unidad" class="select">
+                    <option value="">Seleccionar unidad...</option>
+                    ${INSUMO_UNIDADES.map((u) => `<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join("")}
+                  </select>
                 </label>
 
                 <label class="field">
                   <span>Observaciones</span>
-                  <textarea id="campo-obs" rows="3"></textarea>
+                  <textarea id="insumo-obs" rows="3"></textarea>
                 </label>
 
-                <button id="campo-btn" class="btn" type="submit">Crear campo</button>
-                <div id="campo-msg" class="msg" aria-live="polite"></div>
+                <button id="insumo-btn" class="btn" type="submit">Crear insumo</button>
+                <div id="insumo-msg" class="msg" aria-live="polite"></div>
               </form>
             </section>
 
             <section class="panel">
-              <h2 class="h2">Tus campos</h2>
+              <h2 class="h2">Tus insumos</h2>
               <div id="list-msg" class="msg" aria-live="polite"></div>
-              <div id="campos-list" class="list"></div>
+              <div id="insumos-list" class="list"></div>
             </section>
           </div>
         </section>
@@ -55,11 +91,11 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
       <!-- ✅ Toast (arriba derecha) -->
       <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
-      <!-- Modal: Editar campo -->
+      <!-- Modal: Editar insumo -->
       <div id="modal-edit" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-edit-title">
         <div class="modal">
           <header class="modal-header">
-            <h3 id="modal-edit-title" class="modal-title">Editar campo</h3>
+            <h3 id="modal-edit-title" class="modal-title">Editar insumo</h3>
             <button type="button" class="icon-btn" data-close="modal-edit" aria-label="Cerrar">✕</button>
           </header>
 
@@ -72,8 +108,19 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
             </label>
 
             <label class="field">
-              <span>Superficie (ha)</span>
-              <input id="edit-superficie" type="number" step="0.01" min="0" required />
+              <span>Categoría</span>
+              <select id="edit-categoria" class="select">
+                <option value="">Seleccionar categoría...</option>
+                ${INSUMO_CATEGORIAS.map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("")}
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Unidad</span>
+              <select id="edit-unidad" class="select">
+                <option value="">Seleccionar unidad...</option>
+                ${INSUMO_UNIDADES.map((u) => `<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join("")}
+              </select>
             </label>
 
             <label class="field">
@@ -95,7 +142,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
       <div id="modal-delete" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-delete-title">
         <div class="modal">
           <header class="modal-header">
-            <h3 id="modal-delete-title" class="modal-title">Eliminar campo</h3>
+            <h3 id="modal-delete-title" class="modal-title">Eliminar insumo</h3>
             <button type="button" class="icon-btn" data-close="modal-delete" aria-label="Cerrar">✕</button>
           </header>
 
@@ -103,7 +150,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
             <p class="modal-text">
               ¿Seguro que querés eliminar <strong id="delete-name"></strong>?
               <br />
-              El campo quedará inactivo y no se borrará la información histórica.
+              El insumo quedará inactivo y no se borrará la información histórica.
             </p>
 
             <div id="delete-msg" class="msg" aria-live="polite"></div>
@@ -118,12 +165,12 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
     </main>
   `;
 
-  const listEl = document.querySelector("#campos-list");
+  const listEl = document.querySelector("#insumos-list");
   const listMsg = document.querySelector("#list-msg");
 
-  const form = document.querySelector("#campo-form");
-  const msg = document.querySelector("#campo-msg");
-  const btn = document.querySelector("#campo-btn");
+  const form = document.querySelector("#insumo-form");
+  const msg = document.querySelector("#insumo-msg");
+  const btn = document.querySelector("#insumo-btn");
 
   // ✅ Toast
   const toastEl = document.querySelector("#toast");
@@ -153,37 +200,56 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
     msg.className = `msg ${type}`;
   }
 
+  function ensureOption(selectEl, value, labelPrefix = "(Actual) ") {
+    const v = (value ?? "").trim();
+    if (!v) return;
+
+    const exists = Array.from(selectEl.options).some((o) => o.value === v);
+    if (exists) return;
+
+    // Si viene un valor “viejo” no incluido, lo agregamos para no perderlo
+    const opt = document.createElement("option");
+    opt.value = v;
+    opt.textContent = `${labelPrefix}${v}`;
+    // insertamos después del placeholder
+    selectEl.insertBefore(opt, selectEl.options[1] || null);
+  }
+
   function renderList(items) {
     if (!items || items.length === 0) {
-      listEl.innerHTML = `<div class="empty">No hay campos cargados.</div>`;
+      listEl.innerHTML = `<div class="empty">No hay insumos cargados.</div>`;
       return;
     }
 
     listEl.innerHTML = items
-      .map((c) => {
-        const sup = c.superficie != null ? Number(c.superficie).toFixed(2) : "-";
-        const obs = c.observaciones ? c.observaciones : "";
+      .map((i) => {
+        const cat = i.categoria ? escapeHtml(i.categoria) : "";
+        const uni = i.unidad ? escapeHtml(i.unidad) : "";
+        const obs = i.observaciones ? i.observaciones : "";
+
+        const meta = [cat, uni].filter(Boolean).join(" · ");
+
         return `
-          <article class="item" 
-            data-id="${c.id}"
-            data-nombre="${escapeHtml(c.nombre)}"
-            data-superficie="${c.superficie ?? ""}"
-            data-observaciones="${escapeHtml(c.observaciones ?? "")}"
+          <article class="item"
+            data-id="${i.id}"
+            data-nombre="${escapeHtml(i.nombre)}"
+            data-categoria="${escapeHtml(i.categoria ?? "")}"
+            data-unidad="${escapeHtml(i.unidad ?? "")}"
+            data-observaciones="${escapeHtml(i.observaciones ?? "")}"
           >
             <div class="item-row">
               <div class="item-main">
                 <div class="item-title">
-                  <strong>${escapeHtml(c.nombre)}</strong>
-                  <span class="pill">${sup} ha</span>
+                  <strong>${escapeHtml(i.nombre)}</strong>
                 </div>
 
+                ${meta ? `<div class="item-sub">${meta}</div>` : ``}
                 ${obs ? `<div class="item-sub">${escapeHtml(obs)}</div>` : ``}
               </div>
 
               <div class="item-actions-inline">
-                <button class="icon-action js-lotes" type="button" title="Ver lotes" aria-label="Ver lotes">🧩</button>
-                <button class="icon-action js-edit" type="button" title="Editar campo" aria-label="Editar">✏️</button>
-                <button class="icon-action danger js-delete" type="button" title="Eliminar campo" aria-label="Eliminar">🗑️</button>
+                <button class="icon-action js-edit" type="button" title="Editar insumo" aria-label="Editar">✏️</button>
+                <button class="icon-action danger js-delete" type="button" title="Eliminar insumo" aria-label="Eliminar">🗑️</button>
               </div>
             </div>
           </article>
@@ -200,24 +266,30 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
     if (!id) return;
 
     if (e.target.classList.contains("js-edit")) {
+      const cat = item.getAttribute("data-categoria") || "";
+      const uni = item.getAttribute("data-unidad") || "";
+
       document.querySelector("#edit-id").value = id;
       document.querySelector("#edit-nombre").value = item.getAttribute("data-nombre") || "";
-      document.querySelector("#edit-superficie").value = item.getAttribute("data-superficie") || "";
+
+      const editCatSel = document.querySelector("#edit-categoria");
+      ensureOption(editCatSel, cat);
+      editCatSel.value = cat || "";
+
+      const editUniSel = document.querySelector("#edit-unidad");
+      ensureOption(editUniSel, uni);
+      editUniSel.value = uni || "";
+
       document.querySelector("#edit-obs").value = item.getAttribute("data-observaciones") || "";
       document.querySelector("#edit-msg").textContent = "";
       openModal(modalEdit);
       return;
     }
 
-    if (e.target.classList.contains("js-lotes")) {
-      onGoLotes?.(id);
-      return;
-    }
-
     if (e.target.classList.contains("js-delete")) {
       document.querySelector("#delete-confirm").setAttribute("data-id", id);
       document.querySelector("#delete-name").textContent =
-        item.getAttribute("data-nombre") || "este campo";
+        item.getAttribute("data-nombre") || "este insumo";
       document.querySelector("#delete-msg").textContent = "";
       openModal(modalDelete);
       return;
@@ -256,7 +328,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
     if (e.key === "Escape") closeAllModals();
   });
 
-  async function loadCampos() {
+  async function loadInsumos() {
     if (!BACKEND_URL) {
       setListMsg("Falta configurar VITE_BACKEND_URL", "error");
       return;
@@ -264,7 +336,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
 
     setListMsg("Cargando...", "info");
     try {
-      const resp = await fetch(`${BACKEND_URL}/campos`, {
+      const resp = await fetch(`${BACKEND_URL}/insumos`, {
         method: "GET",
         headers: getAuthHeaders(),
       });
@@ -278,7 +350,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
       }
 
       if (!resp.ok) {
-        setListMsg(data?.message || data?.error || "No se pudieron cargar los campos.", "error");
+        setListMsg(data?.message || data?.error || "No se pudieron cargar los insumos.", "error");
         renderList([]);
         return;
       }
@@ -296,28 +368,27 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
     e.preventDefault();
     setFormMsg("", "info");
 
-    const nombre = document.querySelector("#campo-nombre").value.trim();
-    const superficieRaw = document.querySelector("#campo-superficie").value;
-    const observaciones = document.querySelector("#campo-obs").value.trim();
+    const nombre = document.querySelector("#insumo-nombre").value.trim();
+    const categoria = document.querySelector("#insumo-categoria").value.trim();
+    const unidad = document.querySelector("#insumo-unidad").value.trim();
+    const observaciones = document.querySelector("#insumo-obs").value.trim();
 
     if (!nombre) return setFormMsg("El nombre es obligatorio.", "error");
-    if (!superficieRaw) return setFormMsg("La superficie es obligatoria.", "error");
-
-    const superficie = Number(superficieRaw);
-    if (Number.isNaN(superficie) || superficie <= 0) {
-      setFormMsg("La superficie debe ser un número mayor a 0.", "error");
-      return;
-    }
 
     btn.disabled = true;
     const original = btn.textContent;
     btn.textContent = "Creando...";
 
     try {
-      const resp = await fetch(`${BACKEND_URL}/campos`, {
+      const resp = await fetch(`${BACKEND_URL}/insumos`, {
         method: "POST",
-        headers: { ...getAuthHeaders(), "Content-Type": "application/json" }, // ✅ fix
-        body: JSON.stringify({ nombre, superficie, observaciones }),
+        headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre,
+          categoria: categoria || null,
+          unidad: unidad || null,
+          observaciones: observaciones || null,
+        }),
       });
 
       const data = await resp.json().catch(() => ({}));
@@ -329,21 +400,19 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
       }
 
       if (!resp.ok) {
-        // ✅ mensaje amigable para duplicado
-        if (resp.status === 409 && data?.code === "CAMPO_DUPLICADO") {
-          setFormMsg(data?.message || "Ya existe un campo activo con ese nombre.", "error");
+        if (resp.status === 409 && data?.code === "INSUMO_DUPLICADO") {
+          setFormMsg(data?.message || "Ya existe un insumo activo con ese nombre.", "error");
           return;
         }
-        setFormMsg(data?.message || data?.error || "No se pudo crear el campo.", "error");
+        setFormMsg(data?.message || data?.error || "No se pudo crear el insumo.", "error");
         return;
       }
 
-      // ✅ éxito: toast arriba a la derecha
       setFormMsg("", "info");
-      showToast("Campo creado ✅", "success", 2500);
+      showToast("Insumo creado ✅", "success", 2500);
 
       form.reset();
-      await loadCampos();
+      await loadInsumos();
     } catch (err) {
       console.error(err);
       setFormMsg("Error de conexión con el servidor.", "error");
@@ -368,27 +437,26 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
 
     const id = document.querySelector("#edit-id").value;
     const nombre = document.querySelector("#edit-nombre").value.trim();
-    const superficieRaw = document.querySelector("#edit-superficie").value;
+    const categoria = document.querySelector("#edit-categoria").value.trim();
+    const unidad = document.querySelector("#edit-unidad").value.trim();
     const observaciones = document.querySelector("#edit-obs").value.trim();
 
     if (!nombre) return setEditMsg("El nombre es obligatorio.", "error");
-    if (!superficieRaw) return setEditMsg("La superficie es obligatoria.", "error");
-
-    const superficie = Number(superficieRaw);
-    if (Number.isNaN(superficie) || superficie <= 0) {
-      setEditMsg("La superficie debe ser un número mayor a 0.", "error");
-      return;
-    }
 
     editSaveBtn.disabled = true;
     const original = editSaveBtn.textContent;
     editSaveBtn.textContent = "Guardando...";
 
     try {
-      const resp = await fetch(`${BACKEND_URL}/campos/${id}`, {
+      const resp = await fetch(`${BACKEND_URL}/insumos/${id}`, {
         method: "PUT",
-        headers: { ...getAuthHeaders(), "Content-Type": "application/json" }, // ✅ fix
-        body: JSON.stringify({ nombre, superficie, observaciones }),
+        headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre,
+          categoria: categoria || null,
+          unidad: unidad || null,
+          observaciones: observaciones || null,
+        }),
       });
 
       const data = await resp.json().catch(() => ({}));
@@ -400,9 +468,8 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
       }
 
       if (!resp.ok) {
-        // ✅ mensaje amigable para duplicado
-        if (resp.status === 409 && data?.code === "CAMPO_DUPLICADO") {
-          setEditMsg(data?.message || "Ya existe un campo activo con ese nombre.", "error");
+        if (resp.status === 409 && data?.code === "INSUMO_DUPLICADO") {
+          setEditMsg(data?.message || "Ya existe un insumo activo con ese nombre.", "error");
           return;
         }
         setEditMsg(data?.message || data?.error || "No se pudo guardar.", "error");
@@ -410,9 +477,9 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
       }
 
       closeModal(modalEdit);
-      await loadCampos();
+      await loadInsumos();
 
-      showToast("Campo actualizado ✅", "success", 2500);
+      showToast("Insumo actualizado ✅", "success", 2500);
     } catch (err) {
       console.error(err);
       setEditMsg("Error de conexión.", "error");
@@ -439,7 +506,7 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
     deleteBtn.textContent = "Eliminando...";
 
     try {
-      const resp = await fetch(`${BACKEND_URL}/campos/${id}`, {
+      const resp = await fetch(`${BACKEND_URL}/insumos/${id}`, {
         method: "DELETE",
         headers: getAuthHeaders(),
       });
@@ -458,9 +525,9 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
       }
 
       closeModal(modalDelete);
-      await loadCampos();
+      await loadInsumos();
 
-      showToast("Campo eliminado ✅", "success", 2500);
+      showToast("Insumo eliminado ✅", "success", 2500);
     } catch (err) {
       console.error(err);
       setDeleteMsg("Error de conexión.", "error");
@@ -470,19 +537,18 @@ export function renderCamposPage({ BACKEND_URL, onLogout, onGoCultivos, onGoLote
     }
   });
 
-  // 🔌 Conectar Topbar
   wireTopbar({
-    onGoCampos: () => {}, // ya estás en Campos
+    onGoCampos: () => onGoCampos?.(),
     onGoCultivos: () => onGoCultivos?.(),
-    onGoInsumos: () => onGoInsumos?.(),
-    onRefresh: loadCampos,
+    onGoInsumos: () => {}, // ya estás en Insumos
+    onRefresh: loadInsumos,
     onLogout: () => {
       logout();
       onLogout?.();
     },
   });
 
-  loadCampos();
+  loadInsumos();
 }
 
 function escapeHtml(str) {
